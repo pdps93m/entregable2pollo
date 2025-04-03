@@ -1,14 +1,17 @@
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f0f0f0;
-    margin: 0;
-    padding: 20px;
+    background-color: #f8f9fa; /* Fondo claro */
 }
 
 h1 {
-    color: #333;
+    font-size: 2.5rem;
+    font-weight: bold;
 }
 
-p {
-    color: #666;
+#homeBanking {
+    display: none; /* Ocultar por defecto */
+}
+
+.btn {
+    font-size: 1.1rem;
+    padding: 10px 20px;
 }

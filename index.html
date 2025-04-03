@@ -1,19 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home Banking</title>
+    <!-- Enlace al archivo CSS -->
     <link rel="stylesheet" href="./css/style.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
 </head>
+
 <body>
-    <h1 id="titulo">Home Banking</h1>
-    <p>Este es un simulador de home banking donde puedes realizar operaciones simples como consultar tu saldo, depositar dinero y retirar dinero.</p>
-    <p>El programa usa variables para guardar el saldo y el nombre del usuario. También tiene funciones que permiten realizar cada operación: mostrar el saldo, depositar dinero y retirar dinero.</p>
-    <p>El simulador funciona mostrando un menú de opciones al usuario. Para esto, se usa un bucle que repite el menú hasta que el usuario decide salir. Dependiendo de la opción elegida, se ejecuta una acción diferente.</p>
-    <p>La interacción se realiza con cuadros de diálogo (como prompt y alert) y también con mensajes que aparecen en la consola del navegador.</p>
+    <!-- Formulario de inicio de sesión -->
+    <section id="login" class="mb-4">
+        <h2 class="text-center">Iniciar Sesión</h2>
+        <form id="formLogin" class="p-4 border rounded shadow-sm">
+            <div class="mb-3">
+                <label for="usuarioLogin" class="form-label">Usuario:</label>
+                <input type="text" id="usuarioLogin" class="form-control" placeholder="Ingrese su usuario" required>
+            </div>
+            <div class="mb-3">
+                <label for="contraseniaLogin" class="form-label">Contraseña:</label>
+                <input type="password" id="contraseniaLogin" class="form-control" placeholder="Ingrese su contraseña"
+                    required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Iniciar Sesión</button>
+        </form>
+        <p id="loginMensaje" class="text-center mt-3"></p>
+        <p class="text-center mt-3">En caso de no tener usuario, <button id="btnRegistro"
+                class="btn btn-link">regístrese aquí</button>.</p>
+    </section>
+
+    <!-- Formulario de registro -->
+    <section id="registro" class="mb-4 d-none">
+        <h2 class="text-center">Registro de Usuario</h2>
+        <form id="formRegistro" class="p-4 border rounded shadow-sm">
+            <div class="mb-3">
+                <label for="nombreRegistro" class="form-label">Nombre:</label>
+                <input type="text" id="nombreRegistro" class="form-control" placeholder="Ingrese su nombre" required>
+            </div>
+            <div class="mb-3">
+                <label for="apellidoRegistro" class="form-label">Apellido:</label>
+                <input type="text" id="apellidoRegistro" class="form-control" placeholder="Ingrese su apellido"
+                    required>
+            </div>
+            <div class="mb-3">
+                <label for="usuarioRegistro" class="form-label">Usuario:</label>
+                <input type="text" id="usuarioRegistro" class="form-control" placeholder="Ingrese un nombre de usuario"
+                    required>
+            </div>
+            <div class="mb-3">
+                <label for="contraseniaRegistro" class="form-label">Contraseña:</label>
+                <input type="password" id="contraseniaRegistro" class="form-control"
+                    placeholder="Ingrese una contraseña" required>
+            </div>
+            <div class="mb-3">
+                <label for="saldoRegistro" class="form-label">Saldo Inicial:</label>
+                <input type="number" id="saldoRegistro" class="form-control" placeholder="Ingrese su saldo inicial"
+                    required>
+            </div>
+            <button type="submit" class="btn btn-success w-100">Registrarse</button>
+        </form>
+        <p id="registroMensaje" class="text-center mt-3"></p>
+    </section>
+
+    <!-- Pantalla de inicio personalizada -->
+    <section id="homeBanking" class="d-none">
+        <!-- Descripción -->
+        <section id="descripcion" class="mb-4">
+            <p class="text-center">Bienvenido al simulador de home banking. Aquí puedes realizar operaciones:</p>
+        </section>
+
+        <!-- Acciones disponibles -->
+        <section id="acciones" class="mb-4">
+            <h2 class="text-center">Acciones disponibles</h2>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <button id="consultarSaldo" class="btn btn-primary w-100">Consultar Saldo</button>
+                </div>
+                <div class="col-md-4">
+                    <button id="transferirPropias" class="btn btn-success w-100">Transferir a Cuentas Propias</button>
+                </div>
+                <div class="col-md-4">
+                    <button id="transferirTerceros" class="btn btn-warning w-100">Transferir a Terceros</button>
+                </div>
+                <div class="col-md-4">
+                    <button id="verHistorial" class="btn btn-info w-100">Ver Historial</button>
+                </div>
+                <div class="col-md-4">
+                    <button id="cambiarContrasenia" class="btn btn-secondary w-100">Cambiar Contraseña</button>
+                </div>
+                <div class="col-md-4">
+                    <button id="pagarServicios" class="btn btn-danger w-100">Pagar Servicios</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formulario para transferencias a cuentas propias -->
+        <section id="transferenciaPropias" class="d-none">
+            <h2 class="text-center">Transferir a Cuentas Propias</h2>
+            <form id="formTransferirPropias" class="p-4 border rounded shadow-sm">
+                <div class="mb-3">
+                    <label for="montoTransferenciaPropias" class="form-label">Monto:</label>
+                    <input type="number" id="montoTransferenciaPropias" class="form-control"
+                        placeholder="Ingrese el monto" required>
+                </div>
+                <button type="submit" class="btn btn-success w-100">Transferir</button>
+            </form>
+            <p id="transferenciaPropiasMensaje" class="text-center mt-3"></p>
+        </section>
+
+        <!-- Formulario para transferencias a terceros -->
+        <section id="transferenciaTerceros" class="d-none">
+            <h2 class="text-center">Transferir a Terceros</h2>
+            <form id="formTransferirTerceros" class="p-4 border rounded shadow-sm">
+                <div class="mb-3">
+                    <label for="usuarioDestino" class="form-label">Usuario Destino:</label>
+                    <input type="text" id="usuarioDestino" class="form-control" placeholder="Ingrese el usuario destino"
+                        required>
+                </div>
+                <div class="mb-3">
+                    <label for="montoTransferencia" class="form-label">Monto:</label>
+                    <input type="number" id="montoTransferencia" class="form-control" placeholder="Ingrese el monto"
+                        required>
+                </div>
+                <button type="submit" class="btn btn-warning w-100">Transferir</button>
+            </form>
+            <p id="transferenciaMensaje" class="text-center mt-3"></p>
+        </section>
+
+        <!-- Resultados de las operaciones -->
+        <section id="resultadoOperaciones" class="p-4 border rounded shadow-sm">
+            <h2 class="text-center">Resultados de las Operaciones</h2>
+            <p id="mensajeOperaciones" class="text-center">Aquí aparecerán los resultados de tus operaciones.</p>
+            <!-- Contenedor para los detalles de las operaciones -->
+            <div id="detallesOperacion" class="mt-4 d-none">
+                <!-- Aquí se mostrarán los detalles de las operaciones realizadas -->
+            </div>
+        </section>
+
+        <!-- Contenedor para el historial -->
+        <section id="historialOperaciones" class="p-4 border rounded shadow-sm d-none">
+            <h2 class="text-center">Historial de Operaciones</h2>
+            <ul id="listaHistorial" class="list-group">
+                <!-- Aquí se generarán dinámicamente las acciones del historial -->
+            </ul>
+        </section>
+    </section>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
+    <!-- Enlace al archivo JavaScript -->
     <script src="./js/script.js"></script>
 </body>
+
 </html>
-
-
