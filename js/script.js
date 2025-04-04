@@ -164,9 +164,36 @@ function transferirACuentasPropias(e) {
     mensaje.textContent = "Transferencia realizada con éxito.";
     mensaje.classList.remove("d-none");
 
+    // Mostrar los detalles de la operación
+    const detallesOperacion = document.getElementById("detallesOperacion");
+    detallesOperacion.innerHTML += `
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Origen</th>
+                    <th>Destino</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Transferencia a cuenta propia</td>
+                    <td>Cuenta en pesos</td>
+                    <td>Cuenta en dólares</td>
+                    <td>$${monto.toFixed(2)}</td>
+                    <td>${fecha.toLocaleDateString()}</td>
+                    <td>${fecha.toLocaleTimeString()}</td>
+                </tr>
+            </tbody>
+        </table>
+    `;
+    detallesOperacion.classList.remove("d-none"); // Hacer visible el contenedor
+
     setTimeout(() => {
         mensaje.classList.add("d-none");
-        mostrarPantallaInicio();
     }, 2000);
 }
 
@@ -213,9 +240,36 @@ function transferirATerceros(e) {
     mensaje.textContent = "Transferencia realizada con éxito.";
     mensaje.classList.remove("d-none");
 
+    // Mostrar los detalles de la operación
+    const detallesOperacion = document.getElementById("detallesOperacion");
+    detallesOperacion.innerHTML += `
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Tipo</th>
+                    <th>Origen</th>
+                    <th>Destino</th>
+                    <th>Monto</th>
+                    <th>Fecha</th>
+                    <th>Hora</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Transferencia a terceros</td>
+                    <td>${usuarioLogueado.usuario}</td>
+                    <td>${usuarioDestino}</td>
+                    <td>$${monto.toFixed(2)}</td>
+                    <td>${fecha.toLocaleDateString()}</td>
+                    <td>${fecha.toLocaleTimeString()}</td>
+                </tr>
+            </tbody>
+        </table>
+    `;
+    detallesOperacion.classList.remove("d-none"); // Hacer visible el contenedor
+
     setTimeout(() => {
         mensaje.classList.add("d-none");
-        mostrarPantallaInicio();
     }, 2000);
 }
 
