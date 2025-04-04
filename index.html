@@ -141,6 +141,25 @@
             </div>
         </section>
 
+        <!-- Formulario para cambiar contraseña -->
+        <section id="cambioContrasenia" class="d-none">
+            <h2 class="text-center">Cambiar Contraseña</h2>
+            <form id="formCambiarContrasenia" class="p-4 border rounded shadow-sm">
+                <div class="mb-3">
+                    <label for="contraseniaActual" class="form-label">Contraseña Actual:</label>
+                    <input type="password" id="contraseniaActual" class="form-control"
+                        placeholder="Ingrese su contraseña actual" required>
+                </div>
+                <div class="mb-3">
+                    <label for="nuevaContrasenia" class="form-label">Nueva Contraseña:</label>
+                    <input type="password" id="nuevaContrasenia" class="form-control"
+                        placeholder="Ingrese su nueva contraseña" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Cambiar Contraseña</button>
+            </form>
+            <p id="cambiarContraseniaMensaje" class="text-center mt-3"></p>
+        </section>
+
         <!-- Contenedor para el historial -->
         <section id="historialOperaciones" class="p-4 border rounded shadow-sm d-none">
             <h2 class="text-center">Historial de Operaciones</h2>

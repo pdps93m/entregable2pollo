@@ -272,6 +272,46 @@ function transferirATerceros(e) {
         mensaje.classList.add("d-none");
     }, 2000);
 }
+// Función para manejar el cambio de contraseña
+function cambiarContrasenia(e) {
+    e.preventDefault(); // Evitar que el formulario recargue la página
+
+    const contraseniaActual = document.getElementById("contraseniaActual").value;
+    const nuevaContrasenia = document.getElementById("nuevaContrasenia").value;
+
+    // Validar que el usuario esté logueado
+    if (!usuarioLogueado) {
+        alert("Debe iniciar sesión para cambiar la contraseña.");
+        return;
+    }
+
+    // Validar que la contraseña actual sea correcta
+    if (contraseniaActual !== usuarioLogueado.contrasenia) {
+        document.getElementById("cambiarContraseniaMensaje").textContent = "La contraseña actual es incorrecta.";
+        return;
+    }
+
+    // Validar que la nueva contraseña no esté vacía y tenga al menos 6 caracteres
+    if (!nuevaContrasenia || nuevaContrasenia.length < 6) {
+        document.getElementById("cambiarContraseniaMensaje").textContent = "La nueva contraseña debe tener al menos 6 caracteres.";
+        return;
+    }
+
+    // Actualizar la contraseña del usuario logueado
+    usuarioLogueado.contrasenia = nuevaContrasenia;
+    guardarUsuariosEnLocalStorage(); // Guardar los cambios en localStorage
+
+    // Mostrar mensaje de éxito
+    const mensaje = document.getElementById("cambiarContraseniaMensaje");
+    mensaje.textContent = "Contraseña cambiada con éxito.";
+    mensaje.classList.remove("d-none");
+
+    // Redirigir a la pantalla de inicio personalizada después de 2 segundos
+    setTimeout(() => {
+        mensaje.classList.add("d-none");
+        mostrarPantallaInicio();
+    }, 2000);
+}
 
 // 10. Función para mostrar el historial de operaciones
 function mostrarHistorial() {
@@ -314,6 +354,21 @@ function mostrarHistorial() {
 
 // 11. Eventos para manejar la interacción
 document.addEventListener("DOMContentLoaded", () => {
+    console.log("DOM completamente cargado");
+
+    // Buscar el botón "Cambiar Contraseña"
+    const botonCambiarContrasenia = document.getElementById("cambiarContrasenia");
+    console.log("Botón Cambiar Contraseña:", botonCambiarContrasenia);
+
+    // Verificar si el botón existe antes de agregar el evento
+    if (botonCambiarContrasenia) {
+        botonCambiarContrasenia.addEventListener("click", mostrarFormularioCambiarContrasenia);
+        console.log("Evento 'click' vinculado al botón 'Cambiar Contraseña'");
+    } else {
+        console.error("El botón 'Cambiar Contraseña' no se encontró en el DOM.");
+    }
+
+    // Otros eventos
     document.getElementById("btnRegistro").addEventListener("click", mostrarFormularioRegistro);
     document.getElementById("formRegistro").addEventListener("submit", registrarUsuario);
     document.getElementById("formLogin").addEventListener("submit", iniciarSesion);
@@ -321,7 +376,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("formTransferirTerceros").addEventListener("submit", transferirATerceros);
     document.getElementById("transferirPropias").addEventListener("click", mostrarTransferenciaPropias);
     document.getElementById("transferirTerceros").addEventListener("click", mostrarTransferenciaTerceros);
-    document.getElementById("btnVerHistorial").addEventListener("click", mostrarHistorial);
+    document.getElementById("verHistorial").addEventListener("click", mostrarHistorial);
 });
 
 // 12. Funciones para mostrar las secciones de transferencia
@@ -335,4 +390,15 @@ function mostrarTransferenciaTerceros() {
     document.getElementById("transferenciaTerceros").classList.remove("d-none");
     document.getElementById("transferenciaPropias").classList.add("d-none");
     document.getElementById("mensajeOperaciones").classList.add("d-none");
+}
+
+function mostrarFormularioCambiarContrasenia() {
+    // Ocultar todas las secciones innecesarias
+    document.getElementById("transferenciaPropias").classList.add("d-none");
+    document.getElementById("transferenciaTerceros").classList.add("d-none");
+    document.getElementById("historialOperaciones").classList.add("d-none");
+    document.getElementById("resultadoOperaciones").classList.add("d-none");
+
+    // Mostrar el formulario de cambio de contraseña
+    document.getElementById("cambioContrasenia").classList.remove("d-none");
 }
