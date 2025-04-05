@@ -126,12 +126,22 @@ function cambiarContrasenia(e) {
 
     // Mostrar mensaje de éxito
     const mensaje = document.getElementById("cambiarContraseniaMensaje");
-    mensaje.textContent = "Contraseña cambiada con éxito.";
+    mensaje.textContent = "Contraseña cambiada con éxito. Redirigiendo al inicio de sesión...";
     mensaje.classList.remove("d-none");
 
-    // Redirigir a la pantalla de inicio personalizada después de 2 segundos
+    // Redirigir al formulario de inicio de sesión después de 2 segundos
     setTimeout(() => {
-        mensaje.classList.add("d-none"); // Ocultar el mensaje
+        // Ocultar todas las secciones exclusivas para usuarios logueados
+        document.getElementById("homeBanking").classList.add("d-none");
+        document.getElementById("transferenciaPropias").classList.add("d-none");
+        document.getElementById("transferenciaTerceros").classList.add("d-none");
+        document.getElementById("historialOperaciones").classList.add("d-none");
+        document.getElementById("resultadoOperaciones").classList.add("d-none");
+
+        // Desloguear al usuario
+        usuarioLogueado = null;
+
+        // Mostrar el formulario de inicio de sesión
         document.getElementById("cambioContrasenia").classList.add("d-none"); // Ocultar el formulario de cambio de contraseña
         document.getElementById("login").classList.remove("d-none"); // Mostrar el formulario de inicio de sesión
     }, 2000);
@@ -152,11 +162,41 @@ function iniciarSesion(e) {
 
     if (usuarioEncontrado) {
         usuarioLogueado = usuarioEncontrado;
+
+        // Guardar el id del usuario logueado en localStorage
+        localStorage.setItem("usuarioLogueadoId", usuarioLogueado.id);
+
         mostrarPantallaInicio(); // Mostrar la pantalla de inicio personalizada
     } else {
         document.getElementById("loginMensaje").textContent = "Usuario o contraseña incorrectos.";
     }
 }
+
+// 6.1. Función para cerrar sesión
+function cerrarSesion() {
+    // Desloguear al usuario
+    usuarioLogueado = null;
+
+    // Eliminar el id del usuario logueado del localStorage
+    localStorage.removeItem("usuarioLogueadoId");
+
+    // Ocultar todas las secciones exclusivas para usuarios logueados
+    document.getElementById("homeBanking").classList.add("d-none");
+    document.getElementById("transferenciaPropias").classList.add("d-none");
+    document.getElementById("transferenciaTerceros").classList.add("d-none");
+    document.getElementById("historialOperaciones").classList.add("d-none");
+    document.getElementById("resultadoOperaciones").classList.add("d-none");
+
+    // Ocultar el botón de cerrar sesión
+    const btnCerrarSesion = document.getElementById("btnCerrarSesion");
+    if (btnCerrarSesion) {
+        btnCerrarSesion.classList.add("d-none");
+    }
+
+    // Mostrar el formulario de inicio de sesión
+    document.getElementById("login").classList.remove("d-none");
+}
+
 
 // 7. Función para mostrar la pantalla de inicio personalizada
 function mostrarPantallaInicio() {
@@ -170,6 +210,12 @@ function mostrarPantallaInicio() {
     const homeBanking = document.getElementById("homeBanking");
     homeBanking.classList.remove("d-none"); // Eliminar la clase d-none
     homeBanking.style.display = "block"; // Asegurarse de que el display sea block
+
+    // Mostrar el botón de cerrar sesión
+    const btnCerrarSesion = document.getElementById("btnCerrarSesion");
+    if (btnCerrarSesion) {
+        btnCerrarSesion.classList.remove("d-none");
+    }
 
     // Asegurarse de que "Resultados de las operaciones" esté visible
     const mensajeOperaciones = document.getElementById("mensajeOperaciones");
@@ -414,10 +460,26 @@ function mostrarHistorial() {
     historialOperaciones.classList.remove("d-none");
 }
 
-// 11. Eventos para manejar la interacción
+
 // 11. Eventos para manejar la interacción
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM completamente cargado");
+
+    // Recuperar el id del usuario logueado desde localStorage
+    const usuarioLogueadoId = localStorage.getItem("usuarioLogueadoId");
+    if (usuarioLogueadoId) {
+        usuarioLogueado = usuarios.find((u) => u.id === parseInt(usuarioLogueadoId));
+        if (usuarioLogueado) {
+            console.log("Usuario logueado restaurado:", usuarioLogueado);
+            mostrarPantallaInicio(); // Restaurar la pantalla de inicio personalizada
+        }
+    }
+
+    // Vincular el botón de cerrar sesión
+    const btnCerrarSesion = document.getElementById("btnCerrarSesion");
+    if (btnCerrarSesion) {
+        btnCerrarSesion.addEventListener("click", cerrarSesion);
+    }
 
     // Buscar el botón "Cambiar Contraseña"
     const botonCambiarContrasenia = document.getElementById("cambiarContrasenia");
