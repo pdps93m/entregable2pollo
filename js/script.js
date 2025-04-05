@@ -1,11 +1,14 @@
 // 1. Declaración de variables y constantes globales
 let usuarios = []; // Array para almacenar los usuarios registrados
 let usuarioLogueado = null; // Variable para almacenar el usuario actualmente logueado
-
+console.log("Usuario logueado actualizado:", usuarioLogueado);
 // 2. Funciones para manejar localStorage
 function guardarUsuariosEnLocalStorage() {
+
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
+    console.log("Usuarios en localStorage:", JSON.parse(localStorage.getItem("usuarios")));
 }
+
 
 function recuperarUsuariosDeLocalStorage() {
     const usuariosGuardados = localStorage.getItem("usuarios");
@@ -52,8 +55,9 @@ function registrarUsuario(e) {
         return;
     }
 
-    // Crear el nuevo usuario con cuenta en dólares
+    // Crear el nuevo usuario con un identificador único
     const nuevoUsuario = {
+        id: Date.now(), // Generar un identificador único basado en la fecha actual
         nombre,
         apellido,
         usuario,
@@ -73,6 +77,64 @@ function registrarUsuario(e) {
         document.getElementById("registro").classList.add("d-none"); // Ocultar el formulario de registro
         document.getElementById("login").classList.remove("d-none"); // Mostrar el formulario de inicio de sesión
     }, 2000); // Esperar 2 segundos antes de redirigir
+}
+
+// Función para manejar el cambio de contraseña
+function cambiarContrasenia(e) {
+    e.preventDefault(); // Evitar que el formulario recargue la página
+
+    const contraseniaActual = document.getElementById("contraseniaActual").value;
+    const nuevaContrasenia = document.getElementById("nuevaContrasenia").value;
+
+    // Validar que el usuario esté logueado
+    if (!usuarioLogueado) {
+        alert("Debe iniciar sesión para cambiar la contraseña.");
+        return;
+    }
+
+    // Mostrar las contraseñas para depuración
+    console.log("Contraseña actual en usuarioLogueado:", usuarioLogueado.contrasenia);
+    console.log("Contraseña ingresada:", contraseniaActual);
+
+    // Validar que la contraseña actual sea correcta
+    if (contraseniaActual !== usuarioLogueado.contrasenia) {
+        document.getElementById("cambiarContraseniaMensaje").textContent = "La contraseña actual es incorrecta.";
+        return;
+    }
+
+    // Validar que la nueva contraseña no esté vacía y tenga al menos 6 caracteres
+    if (!nuevaContrasenia || nuevaContrasenia.length < 6) {
+        document.getElementById("cambiarContraseniaMensaje").textContent = "La nueva contraseña debe tener al menos 6 caracteres.";
+        return;
+    }
+
+    // Actualizar la contraseña del usuario logueado
+    usuarioLogueado.contrasenia = nuevaContrasenia;
+    console.log("Usuario logueado actualizado:", usuarioLogueado);
+
+    // Sincronizar el cambio en el array usuarios
+    console.log("Antes de sincronizar:", usuarios);
+    const indexUsuario = usuarios.findIndex((u) => u.id === usuarioLogueado.id);
+    if (indexUsuario !== -1) {
+        usuarios[indexUsuario].contrasenia = nuevaContrasenia;
+    }
+    console.log("Después de sincronizar:", usuarios);
+
+    // Guardar los cambios en localStorage
+    guardarUsuariosEnLocalStorage();
+    console.log("Usuarios en localStorage:", JSON.parse(localStorage.getItem("usuarios")));
+
+    // Mostrar mensaje de éxito
+    const mensaje = document.getElementById("cambiarContraseniaMensaje");
+    mensaje.textContent = "Contraseña cambiada con éxito.";
+    mensaje.classList.remove("d-none");
+
+    // Redirigir a la pantalla de inicio personalizada después de 2 segundos
+    setTimeout(() => {
+        mensaje.classList.add("d-none"); // Ocultar el mensaje
+        document.getElementById("cambioContrasenia").classList.add("d-none"); // Ocultar el formulario de cambio de contraseña
+        document.getElementById("login").classList.remove("d-none"); // Mostrar el formulario de inicio de sesión
+    }, 2000);
 }
 
 // 6. Función para iniciar sesión
@@ -273,44 +335,44 @@ function transferirATerceros(e) {
     }, 2000);
 }
 // Función para manejar el cambio de contraseña
-function cambiarContrasenia(e) {
+function registrarUsuario(e) {
     e.preventDefault(); // Evitar que el formulario recargue la página
 
-    const contraseniaActual = document.getElementById("contraseniaActual").value;
-    const nuevaContrasenia = document.getElementById("nuevaContrasenia").value;
+    // Obtener los valores de los campos del formulario
+    const nombre = document.getElementById("nombreRegistro").value;
+    const apellido = document.getElementById("apellidoRegistro").value;
+    const usuario = document.getElementById("usuarioRegistro").value;
+    const contrasenia = document.getElementById("contraseniaRegistro").value;
+    const saldoInicial = parseFloat(document.getElementById("saldoRegistro").value);
 
-    // Validar que el usuario esté logueado
-    if (!usuarioLogueado) {
-        alert("Debe iniciar sesión para cambiar la contraseña.");
+    // Validar los campos
+    if (!nombre || !apellido || !usuario || !contrasenia || isNaN(saldoInicial) || saldoInicial < 0) {
+        document.getElementById("registroMensaje").textContent = "Todos los campos son obligatorios y el saldo debe ser válido.";
         return;
     }
 
-    // Validar que la contraseña actual sea correcta
-    if (contraseniaActual !== usuarioLogueado.contrasenia) {
-        document.getElementById("cambiarContraseniaMensaje").textContent = "La contraseña actual es incorrecta.";
-        return;
-    }
+    // Crear el nuevo usuario con un identificador único
+    const nuevoUsuario = {
+        id: Date.now(), // Generar un identificador único basado en la fecha actual
+        nombre,
+        apellido,
+        usuario,
+        contrasenia,
+        saldoActual: saldoInicial,
+        cuentaDolares: 0, // Saldo inicial en dólares
+        historial: []
+    };
 
-    // Validar que la nueva contraseña no esté vacía y tenga al menos 6 caracteres
-    if (!nuevaContrasenia || nuevaContrasenia.length < 6) {
-        document.getElementById("cambiarContraseniaMensaje").textContent = "La nueva contraseña debe tener al menos 6 caracteres.";
-        return;
-    }
+    // Agregar el usuario al array y guardar en localStorage
+    usuarios.push(nuevoUsuario);
+    guardarUsuariosEnLocalStorage();
 
-    // Actualizar la contraseña del usuario logueado
-    usuarioLogueado.contrasenia = nuevaContrasenia;
-    guardarUsuariosEnLocalStorage(); // Guardar los cambios en localStorage
-
-    // Mostrar mensaje de éxito
-    const mensaje = document.getElementById("cambiarContraseniaMensaje");
-    mensaje.textContent = "Contraseña cambiada con éxito.";
-    mensaje.classList.remove("d-none");
-
-    // Redirigir a la pantalla de inicio personalizada después de 2 segundos
+    // Mostrar mensaje de éxito y redirigir al formulario de inicio de sesión
+    document.getElementById("registroMensaje").textContent = "Usuario registrado con éxito. Ahora puede iniciar sesión.";
     setTimeout(() => {
-        mensaje.classList.add("d-none");
-        mostrarPantallaInicio();
-    }, 2000);
+        document.getElementById("registro").classList.add("d-none"); // Ocultar el formulario de registro
+        document.getElementById("login").classList.remove("d-none"); // Mostrar el formulario de inicio de sesión
+    }, 2000); // Esperar 2 segundos antes de redirigir
 }
 
 // 10. Función para mostrar el historial de operaciones
@@ -353,6 +415,7 @@ function mostrarHistorial() {
 }
 
 // 11. Eventos para manejar la interacción
+// 11. Eventos para manejar la interacción
 document.addEventListener("DOMContentLoaded", () => {
     console.log("DOM completamente cargado");
 
@@ -367,6 +430,57 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
         console.error("El botón 'Cambiar Contraseña' no se encontró en el DOM.");
     }
+
+    // Vincular el formulario de cambio de contraseña
+    const formCambiarContrasenia = document.getElementById("formCambiarContrasenia");
+    if (formCambiarContrasenia) {
+        formCambiarContrasenia.addEventListener("submit", cambiarContrasenia);
+        console.log("Evento 'submit' vinculado al formulario de cambio de contraseña");
+    } else {
+        console.error("El formulario de cambio de contraseña no se encontró en el DOM.");
+    }
+
+    // Otros eventos
+    const btnRegistro = document.getElementById("btnRegistro");
+    if (btnRegistro) {
+        btnRegistro.addEventListener("click", mostrarFormularioRegistro);
+    }
+
+    const formRegistro = document.getElementById("formRegistro");
+    if (formRegistro) {
+        formRegistro.addEventListener("submit", registrarUsuario);
+    }
+
+    const formLogin = document.getElementById("formLogin");
+    if (formLogin) {
+        formLogin.addEventListener("submit", iniciarSesion);
+    }
+
+    const formTransferirPropias = document.getElementById("formTransferirPropias");
+    if (formTransferirPropias) {
+        formTransferirPropias.addEventListener("submit", transferirACuentasPropias);
+    }
+
+    const formTransferirTerceros = document.getElementById("formTransferirTerceros");
+    if (formTransferirTerceros) {
+        formTransferirTerceros.addEventListener("submit", transferirATerceros);
+    }
+
+    const transferirPropias = document.getElementById("transferirPropias");
+    if (transferirPropias) {
+        transferirPropias.addEventListener("click", mostrarTransferenciaPropias);
+    }
+
+    const transferirTerceros = document.getElementById("transferirTerceros");
+    if (transferirTerceros) {
+        transferirTerceros.addEventListener("click", mostrarTransferenciaTerceros);
+    }
+
+    const btnVerHistorial = document.getElementById("verHistorial");
+    if (btnVerHistorial) {
+        btnVerHistorial.addEventListener("click", mostrarHistorial);
+    }
+
 
     // Otros eventos
     document.getElementById("btnRegistro").addEventListener("click", mostrarFormularioRegistro);
