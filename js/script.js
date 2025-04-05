@@ -88,7 +88,9 @@ function cambiarContrasenia(e) {
 
     // Validar que el usuario esté logueado
     if (!usuarioLogueado) {
-        alert("Debe iniciar sesión para cambiar la contraseña.");
+        const mensaje = document.getElementById("cambiarContraseniaMensaje");
+        mensaje.textContent = "Debe iniciar sesión para cambiar la contraseña.";
+        mensaje.classList.remove("d-none");
         return;
     }
 
@@ -487,7 +489,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Buscar el botón "Cambiar Contraseña"
     const botonCambiarContrasenia = document.getElementById("cambiarContrasenia");
-    
+    if (botonCambiarContrasenia) {
+        botonCambiarContrasenia.addEventListener("click", mostrarFormularioCambiarContrasenia);
+    }
+
 
     // Verificar si el botón existe antes de agregar el evento
     if (botonCambiarContrasenia) {
@@ -499,7 +504,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const formCambiarContrasenia = document.getElementById("formCambiarContrasenia");
     if (formCambiarContrasenia) {
         formCambiarContrasenia.addEventListener("submit", cambiarContrasenia);
-    };
+    }
 
     // Otros eventos
     const btnRegistro = document.getElementById("btnRegistro");
