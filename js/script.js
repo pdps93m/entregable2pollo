@@ -1,12 +1,12 @@
 // 1. Declaración de variables y constantes globales
 let usuarios = []; // Array para almacenar los usuarios registrados
 let usuarioLogueado = null; // Variable para almacenar el usuario actualmente logueado
-console.log("Usuario logueado actualizado:", usuarioLogueado);
+
 // 2. Funciones para manejar localStorage
 function guardarUsuariosEnLocalStorage() {
 
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
-    console.log("Usuarios en localStorage:", JSON.parse(localStorage.getItem("usuarios")));
+
 }
 
 
@@ -92,10 +92,6 @@ function cambiarContrasenia(e) {
         return;
     }
 
-    // Mostrar las contraseñas para depuración
-    console.log("Contraseña actual en usuarioLogueado:", usuarioLogueado.contrasenia);
-    console.log("Contraseña ingresada:", contraseniaActual);
-
     // Validar que la contraseña actual sea correcta
     if (contraseniaActual !== usuarioLogueado.contrasenia) {
         document.getElementById("cambiarContraseniaMensaje").textContent = "La contraseña actual es incorrecta.";
@@ -110,19 +106,19 @@ function cambiarContrasenia(e) {
 
     // Actualizar la contraseña del usuario logueado
     usuarioLogueado.contrasenia = nuevaContrasenia;
-    console.log("Usuario logueado actualizado:", usuarioLogueado);
+
 
     // Sincronizar el cambio en el array usuarios
-    console.log("Antes de sincronizar:", usuarios);
+
     const indexUsuario = usuarios.findIndex((u) => u.id === usuarioLogueado.id);
     if (indexUsuario !== -1) {
         usuarios[indexUsuario].contrasenia = nuevaContrasenia;
     }
-    console.log("Después de sincronizar:", usuarios);
+
 
     // Guardar los cambios en localStorage
     guardarUsuariosEnLocalStorage();
-    console.log("Usuarios en localStorage:", JSON.parse(localStorage.getItem("usuarios")));
+
 
     // Mostrar mensaje de éxito
     const mensaje = document.getElementById("cambiarContraseniaMensaje");
@@ -187,6 +183,10 @@ function cerrarSesion() {
     document.getElementById("historialOperaciones").classList.add("d-none");
     document.getElementById("resultadoOperaciones").classList.add("d-none");
 
+    // Limpiar el contenedor de detalles de operaciones
+    const detallesOperacion = document.getElementById("detallesOperacion");
+    detallesOperacion.innerHTML = ""; // Limpiar el contenido previo
+
     // Ocultar el botón de cerrar sesión
     const btnCerrarSesion = document.getElementById("btnCerrarSesion");
     if (btnCerrarSesion) {
@@ -218,8 +218,15 @@ function mostrarPantallaInicio() {
     }
 
     // Asegurarse de que "Resultados de las operaciones" esté visible
-    const mensajeOperaciones = document.getElementById("mensajeOperaciones");
-    mensajeOperaciones.classList.remove("d-none");
+    const resultadoOperaciones = document.getElementById("resultadoOperaciones");
+    if (resultadoOperaciones) {
+        resultadoOperaciones.classList.remove("d-none");
+    }
+
+    // Limpiar el contenedor de detalles de operaciones
+    const detallesOperacion = document.getElementById("detallesOperacion");
+    detallesOperacion.innerHTML = ""; // Limpiar el contenido previo
+
 
     // Actualizar el nombre y saldo del usuario logueado
     if (usuarioLogueado) {
@@ -229,6 +236,8 @@ function mostrarPantallaInicio() {
             Saldo en pesos: $${usuarioLogueado.saldoActual.toFixed(2)}<br>
             Saldo en dólares: USD ${saldoDolares}
         `;
+        // Actualizar los detalles de la operación para el usuario logueado
+        actualizarDetallesOperacion();
     } else {
         document.getElementById("mensajeOperaciones").textContent = "Error: No hay un usuario logueado.";
     }
@@ -272,33 +281,8 @@ function transferirACuentasPropias(e) {
     mensaje.textContent = "Transferencia realizada con éxito.";
     mensaje.classList.remove("d-none");
 
-    // Mostrar los detalles de la operación
-    const detallesOperacion = document.getElementById("detallesOperacion");
-    detallesOperacion.innerHTML += `
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Tipo</th>
-                    <th>Origen</th>
-                    <th>Destino</th>
-                    <th>Monto</th>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Transferencia a cuenta propia</td>
-                    <td>Cuenta en pesos</td>
-                    <td>Cuenta en dólares</td>
-                    <td>$${monto.toFixed(2)}</td>
-                    <td>${fecha.toLocaleDateString()}</td>
-                    <td>${fecha.toLocaleTimeString()}</td>
-                </tr>
-            </tbody>
-        </table>
-    `;
-    detallesOperacion.classList.remove("d-none"); // Hacer visible el contenedor
+    // Actualizar los detalles de la operación
+    actualizarDetallesOperacion();
 
     setTimeout(() => {
         mensaje.classList.add("d-none");
@@ -348,38 +332,61 @@ function transferirATerceros(e) {
     mensaje.textContent = "Transferencia realizada con éxito.";
     mensaje.classList.remove("d-none");
 
-    // Mostrar los detalles de la operación
-    const detallesOperacion = document.getElementById("detallesOperacion");
-    detallesOperacion.innerHTML += `
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Tipo</th>
-                    <th>Origen</th>
-                    <th>Destino</th>
-                    <th>Monto</th>
-                    <th>Fecha</th>
-                    <th>Hora</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Transferencia a terceros</td>
-                    <td>${usuarioLogueado.usuario}</td>
-                    <td>${usuarioDestino}</td>
-                    <td>$${monto.toFixed(2)}</td>
-                    <td>${fecha.toLocaleDateString()}</td>
-                    <td>${fecha.toLocaleTimeString()}</td>
-                </tr>
-            </tbody>
-        </table>
-    `;
-    detallesOperacion.classList.remove("d-none"); // Hacer visible el contenedor
+    // Actualizar los detalles de la operación
+    actualizarDetallesOperacion();
 
     setTimeout(() => {
         mensaje.classList.add("d-none");
     }, 2000);
 }
+
+// 10. Función para actualizar los detalles de la operación
+function actualizarDetallesOperacion() {
+    const detallesOperacion = document.getElementById("detallesOperacion");
+    detallesOperacion.innerHTML = ""; // Limpiar el contenido previo
+
+    if (usuarioLogueado.historial.length === 0) {
+        detallesOperacion.innerHTML = `
+            <div class="alert alert-info text-center" role="alert">
+                No hay operaciones registradas.
+            </div>
+        `;
+    } else {
+        detallesOperacion.innerHTML = `
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Origen</th>
+                        <th>Destino</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${usuarioLogueado.historial
+                .map(
+                    (accion) => `
+                        <tr>
+                            <td>${accion.tipo}</td>
+                            <td>${accion.origen}</td>
+                            <td>${accion.destino}</td>
+                            <td>$${accion.monto}</td>
+                            <td>${accion.fecha}</td>
+                            <td>${accion.hora}</td>
+                        </tr>
+                    `
+                )
+                .join("")}
+                </tbody>
+            </table>
+        `;
+    }
+
+    detallesOperacion.classList.remove("d-none"); // Hacer visible el contenedor
+}
+
 // Función para manejar el cambio de contraseña
 function registrarUsuario(e) {
     e.preventDefault(); // Evitar que el formulario recargue la página
@@ -423,7 +430,7 @@ function registrarUsuario(e) {
 
 // 10. Función para mostrar el historial de operaciones
 function mostrarHistorial() {
-    console.log("Mostrando historial de operaciones");
+
 
     const historialOperaciones = document.getElementById("historialOperaciones");
     const listaHistorial = document.getElementById("listaHistorial");
@@ -463,14 +470,11 @@ function mostrarHistorial() {
 
 // 11. Eventos para manejar la interacción
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("DOM completamente cargado");
-
     // Recuperar el id del usuario logueado desde localStorage
     const usuarioLogueadoId = localStorage.getItem("usuarioLogueadoId");
     if (usuarioLogueadoId) {
         usuarioLogueado = usuarios.find((u) => u.id === parseInt(usuarioLogueadoId));
         if (usuarioLogueado) {
-            console.log("Usuario logueado restaurado:", usuarioLogueado);
             mostrarPantallaInicio(); // Restaurar la pantalla de inicio personalizada
         }
     }
@@ -483,24 +487,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Buscar el botón "Cambiar Contraseña"
     const botonCambiarContrasenia = document.getElementById("cambiarContrasenia");
-    console.log("Botón Cambiar Contraseña:", botonCambiarContrasenia);
+    
 
     // Verificar si el botón existe antes de agregar el evento
     if (botonCambiarContrasenia) {
         botonCambiarContrasenia.addEventListener("click", mostrarFormularioCambiarContrasenia);
-        console.log("Evento 'click' vinculado al botón 'Cambiar Contraseña'");
-    } else {
-        console.error("El botón 'Cambiar Contraseña' no se encontró en el DOM.");
+
     }
 
     // Vincular el formulario de cambio de contraseña
     const formCambiarContrasenia = document.getElementById("formCambiarContrasenia");
     if (formCambiarContrasenia) {
         formCambiarContrasenia.addEventListener("submit", cambiarContrasenia);
-        console.log("Evento 'submit' vinculado al formulario de cambio de contraseña");
-    } else {
-        console.error("El formulario de cambio de contraseña no se encontró en el DOM.");
-    }
+    };
 
     // Otros eventos
     const btnRegistro = document.getElementById("btnRegistro");
