@@ -78,10 +78,10 @@
             <h2 class="text-center">Acciones disponibles</h2>
             <div class="row g-3">
                 <div class="col-md-4">
-                    <button id="consultarSaldo" class="btn btn-primary w-100">Consultar Saldo</button>
+                    <button id="solicitarPrestamo" class="btn btn-success w-100">Solicitar Prestamo</button>
                 </div>
                 <div class="col-md-4">
-                    <button id="transferirPropias" class="btn btn-success w-100">Transferir a Cuentas Propias</button>
+                    <button id="transferirPropias" class="btn btn-warning w-100">Transferir a Cuentas Propias</button>
                 </div>
                 <div class="col-md-4">
                     <button id="transferirTerceros" class="btn btn-warning w-100">Transferir a Terceros</button>
@@ -93,7 +93,7 @@
                     <button id="cambiarContrasenia" class="btn btn-secondary w-100">Cambiar Contraseña</button>
                 </div>
                 <div class="col-md-4">
-                    <button id="pagarServicios" class="btn btn-danger w-100">Pagar Servicios</button>
+                    <button id="comprarDolares" class="btn btn-success w-100">Comprar Dolares</button>
                 </div>
             </div>
         </section>
@@ -145,6 +145,35 @@
                 <!-- Aquí se mostrarán los detalles de las operaciones realizadas -->
             </div>
         </section>
+
+        <!-- Historial de Préstamos -->
+        <div id="historialPrestamos" class="mb-3 d-none">
+            <h4>Historial de Préstamos</h4>
+            <div id="listaHistorialPrestamos"></div>
+        </div>
+
+        <!-- Formulario para Solicitar Préstamo -->
+        <div id="solicitarPrestamoForm" class="d-none">
+            <h3>Solicitar Préstamo</h3>
+            <input type="number" id="montoPrestamo" placeholder="Monto del préstamo" class="form-control mb-2">
+            <input type="number" id="plazoPrestamo" placeholder="Plazo en meses" class="form-control mb-2">
+            <button id="btnSolicitarPrestamo" class="btn btn-warning w-100">Solicitar</button>
+            <p id="prestamoMensaje" class="text-success mt-2"></p>
+        </div>
+
+        <!-- Historial de Compras de Dólares -->
+        <div id="historialComprasDolares" class="mb-3 d-none">
+            <h4>Historial de Compras de Dólares</h4>
+            <div id="listaHistorialComprasDolares"></div>
+        </div>
+
+        <!-- Formulario para Comprar Dólares -->
+        <div id="comprarDolaresForm" class="d-none">
+            <h3>Comprar Dólares</h3>
+            <input type="number" id="montoCompraDolares" placeholder="Monto en pesos" class="form-control mb-2">
+            <button id="btnComprarDolares" class="btn btn-success w-100">Comprar</button>
+            <p id="compraDolaresMensaje" class="text-success mt-2"></p>
+        </div>
 
         <!-- Formulario para cambiar contraseña -->
         <section id="cambioContrasenia" class="d-none">

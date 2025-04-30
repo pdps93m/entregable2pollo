@@ -21,6 +21,26 @@ function recuperarUsuariosDeLocalStorage() {
 // Inicializar usuarios desde localStorage
 usuarios = recuperarUsuariosDeLocalStorage();
 
+// Migrar el historial de préstamos para actualizar el formato
+function migrarHistorial() {
+    usuarios.forEach((usuario) => {
+        usuario.historial.forEach((accion) => {
+            if (accion.tipo === "Préstamo" && accion.detalle) {
+                const partes = accion.detalle.split(",");
+                accion.monto = partes[0].split(":")[1].trim().replace("$", "");
+                accion.plazo = parseInt(partes[1].split(":")[1].trim());
+                accion.cuota = partes[2].split(":")[1].trim().replace("$", "");
+                delete accion.detalle; // Eliminar el campo detalle
+            }
+        });
+    });
+    guardarUsuariosEnLocalStorage();
+}
+migrarHistorial(); // Ejecutar la migración
+
+// Inicializar usuarios desde localStorage
+usuarios = recuperarUsuariosDeLocalStorage();
+
 // 3. Inicializar la propiedad cuentaDolares en todos los usuarios existentes
 function inicializarUsuarios() {
     usuarios.forEach((usuario) => {
@@ -333,10 +353,94 @@ function transferirATerceros(e) {
     const mensaje = document.getElementById("transferenciaMensaje");
     mensaje.textContent = "Transferencia realizada con éxito.";
     mensaje.classList.remove("d-none");
+}
+
+function solicitarPrestamo() {
+    // Obtener los valores del formulario
+    const monto = parseFloat(document.getElementById("montoPrestamo").value);
+    const plazo = parseInt(document.getElementById("plazoPrestamo").value);
+
+    // Validar los datos ingresados
+    if (isNaN(monto) || monto <= 0 || isNaN(plazo) || plazo <= 0) {
+        document.getElementById("prestamoMensaje").textContent = "Por favor, ingrese un monto y plazo válidos.";
+        return;
+    }
+
+    const tasaInteres = 0.05; // 5% de interés mensual
+    const cuota = (monto * (1 + tasaInteres * plazo)) / plazo;
+
+    // Actualizar el saldo del usuario logueado
+    usuarioLogueado.saldoActual += monto;
+
+    // Registrar la operación en el historial
+    const fecha = new Date();
+    usuarioLogueado.historial.push({
+        tipo: "Préstamo",
+        monto: monto.toFixed(2),
+        plazo: plazo,
+        cuota: cuota.toFixed(2),
+        fecha: fecha.toLocaleDateString(),
+        hora: fecha.toLocaleTimeString()
+    });
+
+    guardarUsuariosEnLocalStorage();
+
+    // Mostrar mensaje de éxito
+    const mensaje = document.getElementById("prestamoMensaje");
+    mensaje.textContent = `Préstamo aprobado. Se han acreditado $${monto.toFixed(2)} a tu saldo.`;
+    mensaje.classList.remove("d-none");
 
     // Actualizar los detalles de la operación
     actualizarDetallesOperacion();
 
+    // Ocultar el mensaje después de 2 segundos
+    setTimeout(() => {
+        mensaje.classList.add("d-none");
+    }, 2000);
+}
+
+function comprarDolares() {
+    // Obtener los valores del formulario
+    const montoPesos = parseFloat(document.getElementById("montoCompraDolares").value);
+
+    // Validar los datos ingresados
+    if (isNaN(montoPesos) || montoPesos <= 0) {
+        document.getElementById("compraDolaresMensaje").textContent = "Por favor, ingrese un monto válido.";
+        return;
+    }
+
+    if (usuarioLogueado.saldoActual < montoPesos) {
+        document.getElementById("compraDolaresMensaje").textContent = "Saldo insuficiente.";
+        return;
+    }
+
+    const tasaCambio = 350; // Simulación de tasa de cambio
+    const dolares = montoPesos / tasaCambio;
+
+    // Actualizar los saldos del usuario logueado
+    usuarioLogueado.saldoActual -= montoPesos;
+    usuarioLogueado.cuentaDolares += dolares;
+
+    // Registrar la operación en el historial
+    const fecha = new Date();
+    usuarioLogueado.historial.push({
+        tipo: "Compra de Dólares",
+        detalle: `Monto en pesos: $${montoPesos}, Dólares: $${dolares.toFixed(2)}`,
+        fecha: fecha.toLocaleDateString(),
+        hora: fecha.toLocaleTimeString()
+    });
+
+    guardarUsuariosEnLocalStorage();
+
+    // Mostrar mensaje de éxito
+    const mensaje = document.getElementById("compraDolaresMensaje");
+    mensaje.textContent = `Compra realizada con éxito. Se han acreditado $${dolares.toFixed(2)} dólares.`;
+    mensaje.classList.remove("d-none");
+
+    // Actualizar los detalles de la operación
+    actualizarDetallesOperacion();
+
+    // Ocultar el mensaje después de 2 segundos
     setTimeout(() => {
         mensaje.classList.add("d-none");
     }, 2000);
@@ -469,6 +573,59 @@ function mostrarHistorial() {
     historialOperaciones.classList.remove("d-none");
 }
 
+function mostrarHistorialPrestamos() {
+    prestamos.forEach((prestamo, index) => {
+        const item = document.createElement("div");
+        item.classList.add("card", "mb-2", "shadow-sm");
+        item.innerHTML = `
+            <div class="card-body">
+                <h5 class="card-title">Préstamo ${index + 1}</h5>
+                <p class="card-text"><strong>Monto:</strong> $${prestamo.monto}</p>
+                <p class="card-text"><strong>Plazo:</strong> ${prestamo.plazo} meses</p>
+                <p class="card-text"><strong>Cuota:</strong> $${prestamo.cuota}</p>
+                <p class="card-text"><strong>Fecha:</strong> ${prestamo.fecha}</p>
+                <p class="card-text"><strong>Hora:</strong> ${prestamo.hora}</p>
+            </div>
+        `;
+        listaHistorialPrestamos.appendChild(item);
+    });
+
+    historialPrestamos.classList.remove("d-none"); // Mostrar el historial
+}
+
+function mostrarHistorialComprasDolares() {
+    const historialComprasDolares = document.getElementById("historialComprasDolares");
+    const listaHistorialComprasDolares = document.getElementById("listaHistorialComprasDolares");
+
+    listaHistorialComprasDolares.innerHTML = ""; // Limpiar contenido previo
+
+    const compras = usuarioLogueado.historial.filter((accion) => accion.tipo === "Compra de Dólares");
+
+    if (compras.length === 0) {
+        listaHistorialComprasDolares.innerHTML = `
+            <div class="alert alert-info text-center" role="alert">
+                No hay compras de dólares registradas.
+            </div>
+        `;
+    } else {
+        compras.forEach((compra, index) => {
+            const item = document.createElement("div");
+            item.classList.add("card", "mb-2", "shadow-sm");
+            item.innerHTML = `
+                <div class="card-body">
+                    <h5 class="card-title">Compra ${index + 1}</h5>
+                    <p class="card-text"><strong>Monto en pesos:</strong> $${compra.detalle.split(",")[0].split(":")[1].trim()}</p>
+                    <p class="card-text"><strong>Dólares comprados:</strong> ${compra.detalle.split(",")[1].split(":")[1].trim()}</p>
+                    <p class="card-text"><strong>Fecha:</strong> ${compra.fecha}</p>
+                    <p class="card-text"><strong>Hora:</strong> ${compra.hora}</p>
+                </div>
+            `;
+            listaHistorialComprasDolares.appendChild(item);
+        });
+    }
+
+    historialComprasDolares.classList.remove("d-none"); // Mostrar el historial
+}
 
 // 11. Eventos para manejar la interacción
 document.addEventListener("DOMContentLoaded", () => {
@@ -485,6 +642,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnCerrarSesion = document.getElementById("btnCerrarSesion");
     if (btnCerrarSesion) {
         btnCerrarSesion.addEventListener("click", cerrarSesion);
+    }
+
+    // Vincular el botón para mostrar el formulario de "Solicitar Préstamo"
+    const btnMostrarPrestamo = document.getElementById("solicitarPrestamo");
+    if (btnMostrarPrestamo) {
+        btnMostrarPrestamo.addEventListener("click", mostrarFormularioPrestamo);
+    }
+
+    // Vincular el botón para mostrar el formulario de "Comprar Dólares"
+    const btnMostrarCompraDolares = document.getElementById("comprarCompraDolares");
+    if (btnMostrarCompraDolares) {
+        btnMostrarCompraDolares.addEventListener("click", mostrarFormularioCompraDolares);
     }
 
     // Buscar el botón "Cambiar Contraseña"
@@ -547,6 +716,16 @@ document.addEventListener("DOMContentLoaded", () => {
         btnVerHistorial.addEventListener("click", mostrarHistorial);
     }
 
+    const btnSolicitarPrestamo = document.getElementById("solicitarPrestamo");
+    if (btnSolicitarPrestamo) {
+        btnSolicitarPrestamo.addEventListener("click", solicitarPrestamo);
+    }
+
+    // Vincular el botón de "Comprar Dólares"
+    const btnComprarDolares = document.getElementById("btnComprarDolares");
+    if (btnComprarDolares) {
+        btnComprarDolares.addEventListener("click", comprarDolares);
+    }
 
     // Otros eventos
     document.getElementById("btnRegistro").addEventListener("click", mostrarFormularioRegistro);
@@ -581,4 +760,22 @@ function mostrarFormularioCambiarContrasenia() {
 
     // Mostrar el formulario de cambio de contraseña
     document.getElementById("cambioContrasenia").classList.remove("d-none");
+}
+
+function mostrarFormularioPrestamo() {
+    mostrarHistorialPrestamos(); // Mostrar el historial de préstamos
+    document.getElementById("solicitarPrestamoForm").classList.remove("d-none");
+    document.getElementById("comprarDolaresForm").classList.add("d-none");
+    document.getElementById("transferenciaPropias").classList.add("d-none");
+    document.getElementById("transferenciaTerceros").classList.add("d-none");
+    document.getElementById("historialOperaciones").classList.add("d-none");
+}
+
+function mostrarFormularioCompraDolares() {
+    mostrarHistorialComprasDolares(); // Mostrar el historial de compras de dólares
+    document.getElementById("comprarDolaresForm").classList.remove("d-none");
+    document.getElementById("solicitarPrestamoForm").classList.add("d-none");
+    document.getElementById("transferenciaPropias").classList.add("d-none");
+    document.getElementById("transferenciaTerceros").classList.add("d-none");
+    document.getElementById("historialOperaciones").classList.add("d-none");
 }
