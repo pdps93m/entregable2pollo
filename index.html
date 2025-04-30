@@ -98,108 +98,75 @@
             </div>
         </section>
 
+        <!-- Formularios adicionales -->
+        <form id="formCambiarContrasenia" class="d-none">
+            <h3 class="text-center">Cambiar Contraseña</h3>
+            <input type="password" id="contraseniaActual" placeholder="Contraseña actual" required>
+            <input type="password" id="nuevaContrasenia" placeholder="Nueva contraseña" required>
+            <button type="submit" class="btn btn-primary w-100">Cambiar Contraseña</button>
+        </form>
+
+        <form id="formTransferirPropias" class="d-none">
+            <h3 class="text-center">Transferir a Cuentas Propias</h3>
+            <input type="number" id="montoTransferenciaPropias" placeholder="Monto a transferir" required>
+            <button type="submit" class="btn btn-primary w-100">Transferir</button>
+        </form>
+
+        <form id="formTransferirTerceros" class="d-none">
+            <h3 class="text-center">Transferir a Terceros</h3>
+            <input type="text" id="usuarioDestino" placeholder="Usuario destino" required>
+            <input type="number" id="montoTransferencia" placeholder="Monto a transferir" required>
+            <button type="submit" class="btn btn-primary w-100">Transferir</button>
+        </form>
+
         <!-- Botón de cerrar sesión -->
         <div class="text-end mb-3">
             <button id="btnCerrarSesion" class="btn btn-danger d-none">Cerrar Sesión</button>
         </div>
 
-        <!-- Formulario para transferencias a cuentas propias -->
-        <section id="transferenciaPropias" class="d-none">
-            <h2 class="text-center">Transferir a Cuentas Propias</h2>
-            <form id="formTransferirPropias" class="p-4 border rounded shadow-sm">
-                <div class="mb-3">
-                    <label for="montoTransferenciaPropias" class="form-label">Monto:</label>
-                    <input type="number" id="montoTransferenciaPropias" class="form-control"
-                        placeholder="Ingrese el monto" required>
-                </div>
-                <button type="submit" class="btn btn-success w-100">Transferir</button>
-            </form>
-            <p id="transferenciaPropiasMensaje" class="text-center mt-3"></p>
-        </section>
-
-        <!-- Formulario para transferencias a terceros -->
-        <section id="transferenciaTerceros" class="d-none">
-            <h2 class="text-center">Transferir a Terceros</h2>
-            <form id="formTransferirTerceros" class="p-4 border rounded shadow-sm">
-                <div class="mb-3">
-                    <label for="usuarioDestino" class="form-label">Usuario Destino:</label>
-                    <input type="text" id="usuarioDestino" class="form-control" placeholder="Ingrese el usuario destino"
-                        required>
-                </div>
-                <div class="mb-3">
-                    <label for="montoTransferencia" class="form-label">Monto:</label>
-                    <input type="number" id="montoTransferencia" class="form-control" placeholder="Ingrese el monto"
-                        required>
-                </div>
-                <button type="submit" class="btn btn-warning w-100">Transferir</button>
-            </form>
-            <p id="transferenciaMensaje" class="text-center mt-3"></p>
-        </section>
-
         <!-- Resultados de las operaciones -->
         <section id="resultadoOperaciones" class="p-4 border rounded shadow-sm">
             <h2 class="text-center">Resultados de las Operaciones</h2>
             <p id="mensajeOperaciones" class="text-center">Aquí aparecerán los resultados de tus operaciones.</p>
-            <!-- Contenedor para los detalles de las operaciones -->
-            <div id="detallesOperacion" class="mt-4 d-none">
-                <!-- Aquí se mostrarán los detalles de las operaciones realizadas -->
+
+            <!-- Tabla para Transferencias -->
+            <div id="tablaTransferencias" class="mt-4">
+                <h3 class="text-center">Transferencias</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Origen</th>
+                            <th>Destino</th>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoTablaTransferencias">
+                        <!-- Aquí se llenarán las transferencias -->
+                    </tbody>
+                </table>
             </div>
-        </section>
 
-        <!-- Historial de Préstamos -->
-        <div id="historialPrestamos" class="mb-3 d-none">
-            <h4>Historial de Préstamos</h4>
-            <div id="listaHistorialPrestamos"></div>
-        </div>
-
-        <!-- Formulario para Solicitar Préstamo -->
-        <div id="solicitarPrestamoForm" class="d-none">
-            <h3>Solicitar Préstamo</h3>
-            <input type="number" id="montoPrestamo" placeholder="Monto del préstamo" class="form-control mb-2">
-            <input type="number" id="plazoPrestamo" placeholder="Plazo en meses" class="form-control mb-2">
-            <button id="btnSolicitarPrestamo" class="btn btn-warning w-100">Solicitar</button>
-            <p id="prestamoMensaje" class="text-success mt-2"></p>
-        </div>
-
-        <!-- Historial de Compras de Dólares -->
-        <div id="historialComprasDolares" class="mb-3 d-none">
-            <h4>Historial de Compras de Dólares</h4>
-            <div id="listaHistorialComprasDolares"></div>
-        </div>
-
-        <!-- Formulario para Comprar Dólares -->
-        <div id="comprarDolaresForm" class="d-none">
-            <h3>Comprar Dólares</h3>
-            <input type="number" id="montoCompraDolares" placeholder="Monto en pesos" class="form-control mb-2">
-            <button id="btnComprarDolares" class="btn btn-success w-100">Comprar</button>
-            <p id="compraDolaresMensaje" class="text-success mt-2"></p>
-        </div>
-
-        <!-- Formulario para cambiar contraseña -->
-        <section id="cambioContrasenia" class="d-none">
-            <h2 class="text-center">Cambiar Contraseña</h2>
-            <form id="formCambiarContrasenia" class="p-4 border rounded shadow-sm">
-                <div class="mb-3">
-                    <label for="contraseniaActual" class="form-label">Contraseña Actual:</label>
-                    <input type="password" id="contraseniaActual" class="form-control"
-                        placeholder="Ingrese su contraseña actual" required>
-                </div>
-                <div class="mb-3">
-                    <label for="nuevaContrasenia" class="form-label">Nueva Contraseña:</label>
-                    <input type="password" id="nuevaContrasenia" class="form-control"
-                        placeholder="Ingrese su nueva contraseña" required>
-                </div>
-                <button type="submit" class="btn btn-primary w-100">Cambiar Contraseña</button>
-            </form>
-            <p id="cambiarContraseniaMensaje" class="text-center mt-3"></p>
-        </section>
-
-        <!-- Contenedor para el historial -->
-        <section id="historialOperaciones" class="p-4 border rounded shadow-sm d-none">
-            <h2 class="text-center">Historial de Operaciones</h2>
-            <ul id="listaHistorial" class="list-group">
-                <!-- Aquí se generarán dinámicamente las acciones del historial -->
-            </ul>
+            <!-- Tabla para Préstamos -->
+            <div id="tablaPrestamos" class="mt-4">
+                <h3 class="text-center">Préstamos</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Monto</th>
+                            <th>Plazo</th>
+                            <th>Cuota</th>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoTablaPrestamos">
+                        <!-- Aquí se llenarán los préstamos -->
+                    </tbody>
+                </table>
+            </div>
         </section>
     </section>
 

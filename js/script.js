@@ -2,13 +2,40 @@
 let usuarios = []; // Array para almacenar los usuarios registrados
 let usuarioLogueado = null; // Variable para almacenar el usuario actualmente logueado
 
+// 2. Función para manejar la visibilidad de las secciones
+function actualizarVisibilidad(seccionesVisibles) {
+    const todasLasSecciones = [
+        "homeBanking",
+        "registro",
+        "login",
+        "formTransferirPropias",
+        "formTransferirTerceros",
+        "resultadoOperaciones",
+        "cambioContrasenia",
+        "solicitarPrestamoForm",
+        "comprarDolaresForm",
+        "historialOperaciones"
+    ];
+
+    todasLasSecciones.forEach((id) => {
+        const elemento = document.getElementById(id);
+        if (elemento) {
+            if (seccionesVisibles.includes(id)) {
+                elemento.classList.remove("d-none"); // Hacer visible
+            } else {
+                elemento.classList.add("d-none"); // Ocultar
+            }
+        } else {
+            console.error(`El elemento con id '${id}' no existe en el DOM.`);
+        }
+    });
+}
 // 2. Funciones para manejar localStorage
 function guardarUsuariosEnLocalStorage() {
 
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
 
 }
-
 
 function recuperarUsuariosDeLocalStorage() {
     const usuariosGuardados = localStorage.getItem("usuarios");
@@ -36,7 +63,9 @@ function migrarHistorial() {
     });
     guardarUsuariosEnLocalStorage();
 }
-migrarHistorial(); // Ejecutar la migración
+
+
+migrarHistorial(); // Llamar a la función para migrar el historial
 
 // Inicializar usuarios desde localStorage
 usuarios = recuperarUsuariosDeLocalStorage();
@@ -50,6 +79,7 @@ function inicializarUsuarios() {
     });
     guardarUsuariosEnLocalStorage(); // Guardar los cambios en localStorage
 }
+
 inicializarUsuarios();
 
 // 4. Función para mostrar el formulario de registro
@@ -98,6 +128,7 @@ function registrarUsuario(e) {
         document.getElementById("login").classList.remove("d-none"); // Mostrar el formulario de inicio de sesión
     }, 2000); // Esperar 2 segundos antes de redirigir
 }
+
 
 // Función para manejar el cambio de contraseña
 function cambiarContrasenia(e) {
@@ -167,6 +198,7 @@ function cambiarContrasenia(e) {
 
 // 6. Función para iniciar sesión
 function iniciarSesion(e) {
+    
     e.preventDefault(); // Evitar que el formulario recargue la página
 
     // Obtener los valores de los campos del formulario
@@ -199,15 +231,32 @@ function cerrarSesion() {
     localStorage.removeItem("usuarioLogueadoId");
 
     // Ocultar todas las secciones exclusivas para usuarios logueados
-    document.getElementById("homeBanking").classList.add("d-none");
-    document.getElementById("transferenciaPropias").classList.add("d-none");
-    document.getElementById("transferenciaTerceros").classList.add("d-none");
-    document.getElementById("historialOperaciones").classList.add("d-none");
-    document.getElementById("resultadoOperaciones").classList.add("d-none");
+    const homeBanking = document.getElementById("homeBanking");
+    if (homeBanking) {
+        homeBanking.classList.add("d-none");
+    }
 
-    // Limpiar el contenedor de detalles de operaciones
-    const detallesOperacion = document.getElementById("detallesOperacion");
-    detallesOperacion.innerHTML = ""; // Limpiar el contenido previo
+    const transferenciaPropias = document.getElementById("transferenciaPropias");
+    if (transferenciaPropias) {
+        transferenciaPropias.classList.add("d-none");
+    }
+
+    const transferenciaTerceros = document.getElementById("transferenciaTerceros");
+    if (transferenciaTerceros) {
+        transferenciaTerceros.classList.add("d-none");
+    } else {
+        console.error("El elemento con id 'transferenciaTerceros' no existe en el DOM.");
+    }
+
+    const historialOperaciones = document.getElementById("historialOperaciones");
+    if (historialOperaciones) {
+        historialOperaciones.classList.add("d-none");
+    }
+
+    const resultadoOperaciones = document.getElementById("resultadoOperaciones");
+    if (resultadoOperaciones) {
+        resultadoOperaciones.classList.add("d-none");
+    }
 
     // Ocultar el botón de cerrar sesión
     const btnCerrarSesion = document.getElementById("btnCerrarSesion");
@@ -216,53 +265,44 @@ function cerrarSesion() {
     }
 
     // Mostrar el formulario de inicio de sesión
-    document.getElementById("login").classList.remove("d-none");
+    const login = document.getElementById("login");
+    if (login) {
+        login.classList.remove("d-none");
+    } else {
+        console.error("El elemento con id 'login' no existe en el DOM.");
+    }
 }
 
 
 // 7. Función para mostrar la pantalla de inicio personalizada
 function mostrarPantallaInicio() {
-    // Ocultar todas las secciones innecesarias
-    document.getElementById("login").classList.add("d-none");
-    document.getElementById("registro").classList.add("d-none");
-    document.getElementById("transferenciaPropias").classList.add("d-none");
-    document.getElementById("transferenciaTerceros").classList.add("d-none");
+    console.log("Ejecutando mostrarPantallaInicio");
 
-    // Mostrar el home banking
+    // Ocultar el formulario de inicio de sesión
+    const login = document.getElementById("login");
+    if (login) {
+        login.classList.add("d-none");
+    }
+
+    // Ocultar el formulario de registro
+    const registro = document.getElementById("registro");
+    if (registro) {
+        registro.classList.add("d-none");
+    }
+
+    // Mostrar la sección de home banking
     const homeBanking = document.getElementById("homeBanking");
-    homeBanking.classList.remove("d-none"); // Eliminar la clase d-none
-    homeBanking.style.display = "block"; // Asegurarse de que el display sea block
-
-    // Mostrar el botón de cerrar sesión
-    const btnCerrarSesion = document.getElementById("btnCerrarSesion");
-    if (btnCerrarSesion) {
-        btnCerrarSesion.classList.remove("d-none");
+    if (homeBanking) {
+        homeBanking.classList.remove("d-none");
     }
 
-    // Asegurarse de que "Resultados de las operaciones" esté visible
-    const resultadoOperaciones = document.getElementById("resultadoOperaciones");
-    if (resultadoOperaciones) {
-        resultadoOperaciones.classList.remove("d-none");
-    }
+    // Hacer visibles todos los botones de la sección "acciones"
+    const botonesAcciones = document.querySelectorAll("#acciones button");
+    botonesAcciones.forEach((boton) => {
+        boton.classList.remove("d-none"); // Eliminar la clase d-none de cada botón
+    });
 
-    // Limpiar el contenedor de detalles de operaciones
-    const detallesOperacion = document.getElementById("detallesOperacion");
-    detallesOperacion.innerHTML = ""; // Limpiar el contenido previo
-
-
-    // Actualizar el nombre y saldo del usuario logueado
-    if (usuarioLogueado) {
-        const saldoDolares = usuarioLogueado.cuentaDolares ? usuarioLogueado.cuentaDolares.toFixed(2) : "0.00";
-        document.getElementById("mensajeOperaciones").innerHTML = `
-            ¡Bienvenido, ${usuarioLogueado.nombre}!<br>
-            Saldo en pesos: $${usuarioLogueado.saldoActual.toFixed(2)}<br>
-            Saldo en dólares: USD ${saldoDolares}
-        `;
-        // Actualizar los detalles de la operación para el usuario logueado
-        actualizarDetallesOperacion();
-    } else {
-        document.getElementById("mensajeOperaciones").textContent = "Error: No hay un usuario logueado.";
-    }
+    console.log("Todos los botones de acciones son visibles.");
 }
 
 // 8. Función para transferir dinero a cuentas propias
@@ -448,49 +488,71 @@ function comprarDolares() {
 
 // 10. Función para actualizar los detalles de la operación
 function actualizarDetallesOperacion() {
-    const detallesOperacion = document.getElementById("detallesOperacion");
-    detallesOperacion.innerHTML = ""; // Limpiar el contenido previo
-
-    if (usuarioLogueado.historial.length === 0) {
-        detallesOperacion.innerHTML = `
-            <div class="alert alert-info text-center" role="alert">
-                No hay operaciones registradas.
-            </div>
-        `;
+    const cuerpoTablaTransferencias = document.getElementById("cuerpoTablaTransferencias");
+    if (cuerpoTablaTransferencias) {
+        cuerpoTablaTransferencias.innerHTML = "";
     } else {
-        detallesOperacion.innerHTML = `
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Tipo</th>
-                        <th>Origen</th>
-                        <th>Destino</th>
-                        <th>Monto</th>
-                        <th>Fecha</th>
-                        <th>Hora</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${usuarioLogueado.historial
-                .map(
-                    (accion) => `
-                        <tr>
-                            <td>${accion.tipo}</td>
-                            <td>${accion.origen}</td>
-                            <td>${accion.destino}</td>
-                            <td>$${accion.monto}</td>
-                            <td>${accion.fecha}</td>
-                            <td>${accion.hora}</td>
-                        </tr>
-                    `
-                )
-                .join("")}
-                </tbody>
-            </table>
-        `;
+        console.error("El elemento con id 'cuerpoTablaTransferencias' no existe en el DOM.");
     }
 
-    detallesOperacion.classList.remove("d-none"); // Hacer visible el contenedor
+    const cuerpoTablaPrestamos = document.getElementById("cuerpoTablaPrestamos");
+    if (cuerpoTablaPrestamos) {
+        cuerpoTablaPrestamos.innerHTML = "";
+    } else {
+        console.error("El elemento con id 'cuerpoTablaPrestamos' no existe en el DOM.");
+    }
+
+    if (usuarioLogueado) {
+        const transferencias = usuarioLogueado.historial.filter(
+            (accion) => accion.tipo === "Transferencia a terceros" || accion.tipo === "Transferencia a cuenta propia"
+        );
+        const prestamos = usuarioLogueado.historial.filter((accion) => accion.tipo === "Préstamo");
+
+        if (transferencias.length === 0 && cuerpoTablaTransferencias) {
+            cuerpoTablaTransferencias.innerHTML = `
+                <tr>
+                    <td colspan="6" class="text-center">No hay transferencias registradas.</td>
+                </tr>
+            `;
+        } else {
+            transferencias.forEach((transferencia) => {
+                const fila = document.createElement("tr");
+                fila.innerHTML = `
+                    <td>${transferencia.tipo}</td>
+                    <td>${transferencia.origen}</td>
+                    <td>${transferencia.destino}</td>
+                    <td>$${transferencia.monto}</td>
+                    <td>${transferencia.fecha}</td>
+                    <td>${transferencia.hora}</td>
+                `;
+                if (cuerpoTablaTransferencias) {
+                    cuerpoTablaTransferencias.appendChild(fila);
+                }
+            });
+        }
+
+        if (prestamos.length === 0 && cuerpoTablaPrestamos) {
+            cuerpoTablaPrestamos.innerHTML = `
+                <tr>
+                    <td colspan="5" class="text-center">No hay préstamos registrados.</td>
+                </tr>
+            `;
+        } else {
+            prestamos.forEach((prestamo) => {
+                const fila = document.createElement("tr");
+                fila.innerHTML = `
+                    <td>$${prestamo.monto}</td>
+                    <td>${prestamo.plazo} meses</td>
+                    <td>$${prestamo.cuota}</td>
+                    <td>${prestamo.fecha}</td>
+                    <td>${prestamo.hora}</td>
+                `;
+                if (cuerpoTablaPrestamos) {
+                    cuerpoTablaPrestamos.appendChild(fila);
+                }
+            });
+        }
+    }
 }
 
 // Función para manejar el cambio de contraseña
@@ -631,9 +693,11 @@ function mostrarHistorialComprasDolares() {
 document.addEventListener("DOMContentLoaded", () => {
     // Recuperar el id del usuario logueado desde localStorage
     const usuarioLogueadoId = localStorage.getItem("usuarioLogueadoId");
+    console.log("Usuario logueado ID:", usuarioLogueadoId); // Verificar si hay un usuario logueado
     if (usuarioLogueadoId) {
         usuarioLogueado = usuarios.find((u) => u.id === parseInt(usuarioLogueadoId));
         if (usuarioLogueado) {
+            console.log("Usuario logueado encontrado:", usuarioLogueado); // Verificar si el usuario fue encontrado
             mostrarPantallaInicio(); // Restaurar la pantalla de inicio personalizada
         }
     }
@@ -642,119 +706,195 @@ document.addEventListener("DOMContentLoaded", () => {
     const btnCerrarSesion = document.getElementById("btnCerrarSesion");
     if (btnCerrarSesion) {
         btnCerrarSesion.addEventListener("click", cerrarSesion);
+    } else {
+        console.error("El elemento con id 'btnCerrarSesion' no existe en el DOM.");
     }
 
     // Vincular el botón para mostrar el formulario de "Solicitar Préstamo"
     const btnMostrarPrestamo = document.getElementById("solicitarPrestamo");
     if (btnMostrarPrestamo) {
         btnMostrarPrestamo.addEventListener("click", mostrarFormularioPrestamo);
+    } else {
+        console.error("El elemento con id 'solicitarPrestamo' no existe en el DOM.");
     }
 
     // Vincular el botón para mostrar el formulario de "Comprar Dólares"
-    const btnMostrarCompraDolares = document.getElementById("comprarCompraDolares");
+    const btnMostrarCompraDolares = document.getElementById("comprarDolares");
     if (btnMostrarCompraDolares) {
         btnMostrarCompraDolares.addEventListener("click", mostrarFormularioCompraDolares);
+    } else {
+        console.error("El elemento con id 'comprarDolares' no existe en el DOM.");
     }
 
     // Buscar el botón "Cambiar Contraseña"
     const botonCambiarContrasenia = document.getElementById("cambiarContrasenia");
     if (botonCambiarContrasenia) {
         botonCambiarContrasenia.addEventListener("click", mostrarFormularioCambiarContrasenia);
-    }
-
-
-    // Verificar si el botón existe antes de agregar el evento
-    if (botonCambiarContrasenia) {
-        botonCambiarContrasenia.addEventListener("click", mostrarFormularioCambiarContrasenia);
-
+    } else {
+        console.error("El elemento con id 'cambiarContrasenia' no existe en el DOM.");
     }
 
     // Vincular el formulario de cambio de contraseña
     const formCambiarContrasenia = document.getElementById("formCambiarContrasenia");
     if (formCambiarContrasenia) {
         formCambiarContrasenia.addEventListener("submit", cambiarContrasenia);
+    } else {
+        console.error("El formulario con id 'formCambiarContrasenia' no existe en el DOM.");
     }
 
-    // Otros eventos
+    // Vincular el botón de registro
     const btnRegistro = document.getElementById("btnRegistro");
     if (btnRegistro) {
         btnRegistro.addEventListener("click", mostrarFormularioRegistro);
+    } else {
+        console.error("El botón con id 'btnRegistro' no existe en el DOM.");
     }
 
+    // Vincular el formulario de registro
     const formRegistro = document.getElementById("formRegistro");
     if (formRegistro) {
         formRegistro.addEventListener("submit", registrarUsuario);
+    } else {
+        console.error("El formulario con id 'formRegistro' no existe en el DOM.");
     }
 
+    // Vincular el formulario de inicio de sesión
     const formLogin = document.getElementById("formLogin");
     if (formLogin) {
         formLogin.addEventListener("submit", iniciarSesion);
+    } else {
+        console.error("El formulario con id 'formLogin' no existe en el DOM.");
     }
 
+    // Vincular el formulario de transferencias a cuentas propias
     const formTransferirPropias = document.getElementById("formTransferirPropias");
     if (formTransferirPropias) {
         formTransferirPropias.addEventListener("submit", transferirACuentasPropias);
+    } else {
+        console.error("El formulario con id 'formTransferirPropias' no existe en el DOM.");
     }
 
+    // Vincular el formulario de transferencias a terceros
     const formTransferirTerceros = document.getElementById("formTransferirTerceros");
     if (formTransferirTerceros) {
         formTransferirTerceros.addEventListener("submit", transferirATerceros);
+    } else {
+        console.error("El formulario con id 'formTransferirTerceros' no existe en el DOM.");
     }
 
+    // Vincular el botón para mostrar transferencias a cuentas propias
     const transferirPropias = document.getElementById("transferirPropias");
     if (transferirPropias) {
         transferirPropias.addEventListener("click", mostrarTransferenciaPropias);
+    } else {
+        console.error("El botón con id 'transferirPropias' no existe en el DOM.");
     }
 
+    // Vincular el botón para mostrar transferencias a terceros
     const transferirTerceros = document.getElementById("transferirTerceros");
     if (transferirTerceros) {
         transferirTerceros.addEventListener("click", mostrarTransferenciaTerceros);
+    } else {
+        console.error("El botón con id 'transferirTerceros' no existe en el DOM.");
     }
 
+    // Vincular el botón para mostrar el historial de operaciones
     const btnVerHistorial = document.getElementById("verHistorial");
     if (btnVerHistorial) {
         btnVerHistorial.addEventListener("click", mostrarHistorial);
+    } else {
+        console.error("El botón con id 'verHistorial' no existe en el DOM.");
     }
 
+    // Vincular el botón para solicitar un préstamo
     const btnSolicitarPrestamo = document.getElementById("solicitarPrestamo");
     if (btnSolicitarPrestamo) {
         btnSolicitarPrestamo.addEventListener("click", solicitarPrestamo);
+    } else {
+        console.error("El botón con id 'solicitarPrestamo' no existe en el DOM.");
     }
 
     // Vincular el botón de "Comprar Dólares"
-    const btnComprarDolares = document.getElementById("btnComprarDolares");
+    const btnComprarDolares = document.getElementById("comprarDolares");
     if (btnComprarDolares) {
         btnComprarDolares.addEventListener("click", comprarDolares);
+    } else {
+        console.error("El botón con id 'btnComprarDolares' no existe en el DOM.");
     }
 
-    // Otros eventos
+
+// Otros eventos
     document.getElementById("btnRegistro").addEventListener("click", mostrarFormularioRegistro);
     document.getElementById("formRegistro").addEventListener("submit", registrarUsuario);
     document.getElementById("formLogin").addEventListener("submit", iniciarSesion);
     document.getElementById("formTransferirPropias").addEventListener("submit", transferirACuentasPropias);
     document.getElementById("formTransferirTerceros").addEventListener("submit", transferirATerceros);
-    document.getElementById("transferirPropias").addEventListener("click", mostrarTransferenciaPropias);
-    document.getElementById("transferirTerceros").addEventListener("click", mostrarTransferenciaTerceros);
+   
     document.getElementById("verHistorial").addEventListener("click", mostrarHistorial);
+    document.getElementById("solicitarPrestamo").addEventListener("click", mostrarFormularioPrestamo);
+    document.getElementById("comprarDolares").addEventListener("click", mostrarFormularioCompraDolares);
+    
+    document.getElementById("btnCerrarSesion").addEventListener("click", cerrarSesion);
 });
 
 // 12. Funciones para mostrar las secciones de transferencia
 function mostrarTransferenciaPropias() {
-    document.getElementById("transferenciaPropias").classList.remove("d-none");
-    document.getElementById("transferenciaTerceros").classList.add("d-none");
-    document.getElementById("mensajeOperaciones").classList.add("d-none");
+    const transferenciaPropias = document.getElementById("transferirPropias");
+    if (transferenciaPropias) {
+        transferenciaPropias.classList.remove("d-none");
+    } else {
+        console.error("El elemento con id 'transferenciaPropias' no existe en el DOM.");
+    }
+
+    const transferenciaTerceros = document.getElementById("transfeirTerceros");
+    if (transferenciaTerceros) {
+        transferenciaTerceros.classList.add("d-none");
+    } else {
+        console.error("El elemento con id 'transferenciaTerceros' no existe en el DOM.");
+    }
+
+    const resultadoOperaciones = document.getElementById("resultadoOperaciones");
+    if (resultadoOperaciones) {
+        resultadoOperaciones.classList.add("d-none");
+    } else {
+        console.error("El elemento con id 'resultadoOperaciones' no existe en el DOM.");
+    }
+
+    const mensajeOperaciones = document.getElementById("mensajeOperaciones");
+    if (mensajeOperaciones) {
+        mensajeOperaciones.classList.add("d-none");
+    } else {
+        console.error("El elemento con id 'mensajeOperaciones' no existe en el DOM.");
+    }
 }
 
 function mostrarTransferenciaTerceros() {
-    document.getElementById("transferenciaTerceros").classList.remove("d-none");
-    document.getElementById("transferenciaPropias").classList.add("d-none");
-    document.getElementById("mensajeOperaciones").classList.add("d-none");
+    const transferenciaTerceros = document.getElementById("transferirTerceros");
+    if (transferenciaTerceros) {
+        transferenciaTerceros.classList.remove("d-none");
+    } else {
+        console.error("El elemento con id 'transferenciaTerceros' no existe en el DOM.");
+    }
+
+    const transferenciaPropias = document.getElementById("transferirPropias");
+    if (transferenciaPropias) {
+        transferenciaPropias.classList.add("d-none");
+    } else {
+        console.error("El elemento con id 'transferenciaPropias' no existe en el DOM.");
+    }
+
+    const mensajeOperaciones = document.getElementById("mensajeOperaciones");
+    if (mensajeOperaciones) {
+        mensajeOperaciones.classList.add("d-none");
+    } else {
+        console.error("El elemento con id 'mensajeOperaciones' no existe en el DOM.");
+    }
 }
 
 function mostrarFormularioCambiarContrasenia() {
     // Ocultar todas las secciones innecesarias
-    document.getElementById("transferenciaPropias").classList.add("d-none");
-    document.getElementById("transferenciaTerceros").classList.add("d-none");
+    document.getElementById("transferirPropias").classList.add("d-none");
+    document.getElementById("transferirTerceros").classList.add("d-none");
     document.getElementById("historialOperaciones").classList.add("d-none");
     document.getElementById("resultadoOperaciones").classList.add("d-none");
 
@@ -766,16 +906,16 @@ function mostrarFormularioPrestamo() {
     mostrarHistorialPrestamos(); // Mostrar el historial de préstamos
     document.getElementById("solicitarPrestamoForm").classList.remove("d-none");
     document.getElementById("comprarDolaresForm").classList.add("d-none");
-    document.getElementById("transferenciaPropias").classList.add("d-none");
-    document.getElementById("transferenciaTerceros").classList.add("d-none");
-    document.getElementById("historialOperaciones").classList.add("d-none");
+    document.getElementById("transferirPropias").classList.add("d-none");
+    document.getElementById("transferirTerceros").classList.add("d-none");
+    document.getElementById("resultadoOperaciones").classList.add("d-none");
 }
 
 function mostrarFormularioCompraDolares() {
     mostrarHistorialComprasDolares(); // Mostrar el historial de compras de dólares
     document.getElementById("comprarDolaresForm").classList.remove("d-none");
     document.getElementById("solicitarPrestamoForm").classList.add("d-none");
-    document.getElementById("transferenciaPropias").classList.add("d-none");
-    document.getElementById("transferenciaTerceros").classList.add("d-none");
+    document.getElementById("transferirPropias").classList.add("d-none");
+    document.getElementById("transferirTerceros").classList.add("d-none");
     document.getElementById("historialOperaciones").classList.add("d-none");
 }

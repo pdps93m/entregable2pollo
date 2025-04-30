@@ -7,10 +7,6 @@ h1 {
     font-weight: bold;
 }
 
-#homeBanking {
-    display: none; /* Ocultar por defecto */
-}
-
 .btn {
     font-size: 1.1rem;
     padding: 10px 20px;
