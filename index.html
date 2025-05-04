@@ -68,6 +68,13 @@
 
     <!-- Pantalla de inicio personalizada -->
     <section id="homeBanking" class="d-none">
+        <!-- Mensaje de bienvenida -->
+        <section id="mensajeBienvenida" class="mb-4 text-center">
+            <h2 id="bienvenidaUsuario">Bienvenido</h2>
+            <p id="saldoPesos">Saldo actual en pesos: $0.00</p>
+            <p id="saldoDolares">Saldo actual en dólares: $0.00</p>
+        </section>
+
         <!-- Descripción -->
         <section id="descripcion" class="mb-4">
             <p class="text-center">Bienvenido al simulador de home banking. Aquí puedes realizar operaciones:</p>
@@ -106,18 +113,124 @@
             <button type="submit" class="btn btn-primary w-100">Cambiar Contraseña</button>
         </form>
 
-        <form id="formTransferirPropias" class="d-none">
-            <h3 class="text-center">Transferir a Cuentas Propias</h3>
-            <input type="number" id="montoTransferenciaPropias" placeholder="Monto a transferir" required>
-            <button type="submit" class="btn btn-primary w-100">Transferir</button>
+        <section id="formTransferirPropias" class="d-none">
+            <form id="formularioTransferenciaPropias">
+                <label for="montoTransferenciaPropias">Monto:</label>
+                <input type="number" id="montoTransferenciaPropias" required>
+                <button type="submit">Confirmar transferencia</button>
+            </form>
+        </section>
+
+        <section id="historialTransferenciasPropias" class="d-none">
+            <h3>Historial de transferencias a cuentas propias</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoHistorialTransferenciasPropias">
+                    <!-- Historial dinámico -->
+                </tbody>
+            </table>
+        </section>
+
+        <section id="formTransferirTerceros" class="d-none">
+            <form id="formularioTransferenciaTerceros">
+                <label for="usuarioDestino">Usuario destino:</label>
+                <input type="text" id="usuarioDestino" required>
+                <label for="montoTransferencia">Monto:</label>
+                <input type="number" id="montoTransferencia" required>
+                <label for="monedaTransferencia">Moneda:</label>
+                <select id="monedaTransferencia">
+                    <option value="pesos">Pesos</option>
+                    <option value="dolares">Dólares</option>
+                </select>
+                <button type="submit">Confirmar transferencia</button>
+            </form>
+        </section>
+
+        <section id="historialTransferenciasTerceros" class="d-none">
+            <h3>Historial de transferencias a terceros</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Usuario destino</th>
+                        <th>Monto</th>
+                        <th>Moneda</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoHistorialTransferenciasTerceros">
+                    <!-- Historial dinámico -->
+                </tbody>
+            </table>
+        </section>
+
+        <section id="formSolicitarPrestamo" class="d-none">
+            <form id="formularioSolicitarPrestamo">
+                <label for="montoPrestamo">Monto del Préstamo:</label>
+                <input type="number" id="montoPrestamo" required>
+                <label for="plazoPrestamo">Plazo (en meses):</label>
+                <input type="number" id="plazoPrestamo" required>
+                <button type="submit">Solicitar Préstamo</button>
+            </form>
+        </section>
+        
+        <section id="tablaPrestamos" class="d-none">
+            <h3>Historial de Préstamos</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Monto</th>
+                        <th>Plazo</th>
+                        <th>Cuota</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTablaPrestamos">
+                    <!-- Historial dinámico -->
+                </tbody>
+            </table>
+        </section>
+
+        <form id="formComprarDolares" class="d-none">
+            <h3 class="text-center">Comprar Dólares</h3>
+            <div class="mb-3">
+                <label for="montoCompraDolares" class="form-label">Monto en Pesos:</label>
+                <input type="number" id="montoCompraDolares" class="form-control"
+                    placeholder="Ingrese el monto en pesos" required>
+            </div>
+            <div class="mb-3">
+                <label for="tasaCambio" class="form-label">Tasa de Cambio:</label>
+                <input type="number" id="tasaCambio" class="form-control" placeholder="Ingrese la tasa de cambio actual"
+                    required>
+            </div>
+            <button type="submit" class="btn btn-primary w-100">Comprar</button>
         </form>
 
-        <form id="formTransferirTerceros" class="d-none">
-            <h3 class="text-center">Transferir a Terceros</h3>
-            <input type="text" id="usuarioDestino" placeholder="Usuario destino" required>
-            <input type="number" id="montoTransferencia" placeholder="Monto a transferir" required>
-            <button type="submit" class="btn btn-primary w-100">Transferir</button>
-        </form>
+        <!-- Historial de compras de dólares -->
+        <section id="historialComprasDolares" class="mt-4 d-none">
+            <h3 class="text-center">Historial de Compras de Dólares</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Monto en Pesos</th>
+                        <th>Monto en Dólares</th>
+                        <th>Tasa de Cambio</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoHistorialComprasDolares">
+                    <!-- Aquí se llenarán las compras de dólares -->
+                </tbody>
+            </table>
+        </section>
 
         <!-- Botón de cerrar sesión -->
         <div class="text-end mb-3">

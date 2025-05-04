@@ -11,3 +11,7 @@ h1 {
     font-size: 1.1rem;
     padding: 10px 20px;
 }
+
+.d-none {
+    display: none !important;
+}
