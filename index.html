@@ -113,16 +113,17 @@
             <button type="submit" class="btn btn-primary w-100">Cambiar Contraseña</button>
         </form>
 
-        <section id="formTransferirPropias" class="d-none">
+        <section id="formTransferirPropias" class="seccion d-none">
+            <h3>Transferir a Cuentas Propias</h3>
             <form id="formularioTransferenciaPropias">
                 <label for="montoTransferenciaPropias">Monto:</label>
                 <input type="number" id="montoTransferenciaPropias" required>
-                <button type="submit">Confirmar transferencia</button>
+                <button type="submit">Confirmar Transferencia</button>
             </form>
         </section>
 
-        <section id="historialTransferenciasPropias" class="d-none">
-            <h3>Historial de transferencias a cuentas propias</h3>
+        <section id="historialTransferenciasPropias" class="seccion d-none">
+            <h3>Historial de Transferencias a Cuentas Propias</h3>
             <table>
                 <thead>
                     <tr>
@@ -137,7 +138,8 @@
             </table>
         </section>
 
-        <section id="formTransferirTerceros" class="d-none">
+        <section id="formTransferirTerceros" class="seccion d-none">
+            <h3>Transferir a Terceros</h3>
             <form id="formularioTransferenciaTerceros">
                 <label for="usuarioDestino">Usuario destino:</label>
                 <input type="text" id="usuarioDestino" required>
@@ -148,16 +150,16 @@
                     <option value="pesos">Pesos</option>
                     <option value="dolares">Dólares</option>
                 </select>
-                <button type="submit">Confirmar transferencia</button>
+                <button type="submit">Confirmar Transferencia</button>
             </form>
         </section>
 
-        <section id="historialTransferenciasTerceros" class="d-none">
-            <h3>Historial de transferencias a terceros</h3>
+        <section id="historialTransferenciasTerceros" class="seccion d-none">
+            <h3>Historial de Transferencias a Terceros</h3>
             <table>
                 <thead>
                     <tr>
-                        <th>Usuario destino</th>
+                        <th>Usuario Destino</th>
                         <th>Monto</th>
                         <th>Moneda</th>
                         <th>Fecha</th>
@@ -170,7 +172,8 @@
             </table>
         </section>
 
-        <section id="formSolicitarPrestamo" class="d-none">
+        <section id="formSolicitarPrestamo" class="seccion d-none">
+            <h3>Solicitar Préstamo</h3>
             <form id="formularioSolicitarPrestamo">
                 <label for="montoPrestamo">Monto del Préstamo:</label>
                 <input type="number" id="montoPrestamo" required>
@@ -179,8 +182,8 @@
                 <button type="submit">Solicitar Préstamo</button>
             </form>
         </section>
-        
-        <section id="tablaPrestamos" class="d-none">
+
+        <section id="tablaPrestamos" class="seccion d-none">
             <h3>Historial de Préstamos</h3>
             <table>
                 <thead>
@@ -232,63 +235,46 @@
             </table>
         </section>
 
-        <!-- Botón de cerrar sesión -->
-        <div class="text-end mb-3">
-            <button id="btnCerrarSesion" class="btn btn-danger d-none">Cerrar Sesión</button>
+        
+        <!-- Botón de Cerrar Sesión -->
+        <button id="btnCerrarSesion" class="btn-cerrar-sesion">Cerrar Sesión</button>
+
+
+        <!-- Tabla para Transferencias -->
+        <div id="tablaTransferencias" class="mt-4">
+            <h3 class="text-center">Transferencias</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Tipo</th>
+                        <th>Origen</th>
+                        <th>Destino</th>
+                        <th>Monto</th>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpoTablaTransferencias">
+                    <!-- Aquí se llenarán las transferencias -->
+                </tbody>
+            </table>
         </div>
 
-        <!-- Resultados de las operaciones -->
-        <section id="resultadoOperaciones" class="p-4 border rounded shadow-sm">
-            <h2 class="text-center">Resultados de las Operaciones</h2>
-            <p id="mensajeOperaciones" class="text-center">Aquí aparecerán los resultados de tus operaciones.</p>
 
-            <!-- Tabla para Transferencias -->
-            <div id="tablaTransferencias" class="mt-4">
-                <h3 class="text-center">Transferencias</h3>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Tipo</th>
-                            <th>Origen</th>
-                            <th>Destino</th>
-                            <th>Monto</th>
-                            <th>Fecha</th>
-                            <th>Hora</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cuerpoTablaTransferencias">
-                        <!-- Aquí se llenarán las transferencias -->
-                    </tbody>
-                </table>
-            </div>
 
-            <!-- Tabla para Préstamos -->
-            <div id="tablaPrestamos" class="mt-4">
-                <h3 class="text-center">Préstamos</h3>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Monto</th>
-                            <th>Plazo</th>
-                            <th>Cuota</th>
-                            <th>Fecha</th>
-                            <th>Hora</th>
-                        </tr>
-                    </thead>
-                    <tbody id="cuerpoTablaPrestamos">
-                        <!-- Aquí se llenarán los préstamos -->
-                    </tbody>
-                </table>
+        <section id="verHistorialCompleto" class="seccion d-none">
+            <h3>Historial Completo</h3>
+            <div id="contenedorHistoriales">
+                <!-- Aquí se incluirán dinámicamente los historiales -->
             </div>
         </section>
-    </section>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-    <!-- Enlace al archivo JavaScript -->
-    <script src="./js/script.js"></script>
+        <!-- Bootstrap JS -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+            crossorigin="anonymous"></script>
+        <!-- Enlace al archivo JavaScript -->
+        <script src="./js/script.js"></script>
 </body>
 
 </html>

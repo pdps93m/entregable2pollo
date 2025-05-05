@@ -331,9 +331,24 @@ function actualizarHistorialTransferenciasTerceros() {
 }
 
 // Función para mostrar historial de operaciones
-function mostrarHistorial() {
-    console.log("Mostrando historial de operaciones");
-    actualizarVisibilidad(["homeBanking", "acciones", "tablaTransferencias", "tablaPrestamos"]);
+function mostrarTodosLosHistoriales() {
+    console.log("Mostrando todos los historiales");
+
+    // Actualizar visibilidad para mostrar todos los historiales
+    actualizarVisibilidad([
+        "homeBanking",
+        "acciones",
+        "historialTransferenciasPropias",
+        "historialTransferenciasTerceros",
+        "historialComprasDolares",
+        "tablaPrestamos"
+    ]);
+
+    // Actualizar dinámicamente cada historial
+    actualizarHistorialTransferenciasPropias();
+    actualizarHistorialTransferenciasTerceros();
+    actualizarHistorialComprasDolares();
+    actualizarHistorialPrestamos();
 }
 
 // Función para mostrar el formulario de cambio de contraseña
@@ -592,6 +607,11 @@ function comprarDolares(e) {
 
 function actualizarHistorialComprasDolares() {
     const cuerpoHistorial = document.getElementById("cuerpoHistorialComprasDolares");
+    if (!cuerpoHistorial) {
+        console.error("El elemento con id 'cuerpoHistorialComprasDolares' no existe en el DOM.");
+        return;
+    }
+
     cuerpoHistorial.innerHTML = ""; // Limpiar el historial
 
     if (usuarioLogueado.historialComprasDolares && usuarioLogueado.historialComprasDolares.length > 0) {
@@ -700,6 +720,15 @@ if (formTransferirTerceros) {
     formTransferirTerceros.addEventListener("submit", confirmarTransferenciaTerceros);
 }
 
+const btnVerHistorial = document.getElementById("verHistorial");
+if (btnVerHistorial) {
+    btnVerHistorial.addEventListener("click", mostrarTodosLosHistoriales);
+}
+
+const btnCerrarSesion = document.getElementById("btnCerrarSesion");
+if (btnCerrarSesion) {
+    btnCerrarSesion.addEventListener("click", cerrarSesion);
+}
 
 // Cerrar sesión al recargar o salir de la página
 
