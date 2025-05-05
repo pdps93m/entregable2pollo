@@ -106,12 +106,22 @@
         </section>
 
         <!-- Formularios adicionales -->
-        <form id="formCambiarContrasenia" class="d-none">
+        <section id="formCambiarContrasenia" class="seccion d-none">
             <h3 class="text-center">Cambiar Contraseña</h3>
-            <input type="password" id="contraseniaActual" placeholder="Contraseña actual" required>
-            <input type="password" id="nuevaContrasenia" placeholder="Nueva contraseña" required>
-            <button type="submit" class="btn btn-primary w-100">Cambiar Contraseña</button>
-        </form>
+            <form id="formularioCambiarContrasenia">
+                <div class="mb-3">
+                    <label for="contraseniaActual" class="form-label">Contraseña Actual:</label>
+                    <input type="password" id="contraseniaActual" class="form-control"
+                        placeholder="Ingrese su contraseña actual" required>
+                </div>
+                <div class="mb-3">
+                    <label for="nuevaContrasenia" class="form-label">Nueva Contraseña:</label>
+                    <input type="password" id="nuevaContrasenia" class="form-control"
+                        placeholder="Ingrese su nueva contraseña" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100">Cambiar Contraseña</button>
+            </form>
+        </section>
 
         <section id="formTransferirPropias" class="seccion d-none">
             <h3>Transferir a Cuentas Propias</h3>
@@ -235,7 +245,7 @@
             </table>
         </section>
 
-        
+
         <!-- Botón de Cerrar Sesión -->
         <button id="btnCerrarSesion" class="btn-cerrar-sesion">Cerrar Sesión</button>
 

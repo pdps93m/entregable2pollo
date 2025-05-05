@@ -357,6 +357,37 @@ function mostrarFormularioCambiarContrasenia() {
     actualizarVisibilidad(["homeBanking", "acciones", "formCambiarContrasenia"]);
 }
 
+function cambiarContrasenia(e) {
+    e.preventDefault(); // Evitar recargar la página
+
+    const contraseniaActual = document.getElementById("contraseniaActual").value.trim();
+    const nuevaContrasenia = document.getElementById("nuevaContrasenia").value.trim();
+
+    if (!contraseniaActual || !nuevaContrasenia) {
+        alert("Por favor, complete todos los campos.");
+        return;
+    }
+
+    if (contraseniaActual !== usuarioLogueado.contrasenia) {
+        alert("La contraseña actual ingresada es incorrecta.");
+        return;
+    }
+
+    if (contraseniaActual === nuevaContrasenia) {
+        alert("La nueva contraseña no puede ser igual a la actual.");
+        return;
+    }
+
+    // Actualizar la contraseña del usuario
+    usuarioLogueado.contrasenia = nuevaContrasenia;
+
+    // Actualizar el array `usuarios` en el localStorage
+    localStorage.setItem("usuarios", JSON.stringify(usuarios));
+
+    alert("Contraseña cambiada con éxito.");
+    mostrarPantallaInicio(); // Volver a la pantalla de inicio
+}
+
 // Función para mostrar el formulario y el historial de transferencias a terceros
 function mostrarFormularioTransferenciaTerceros() {
     console.log("Mostrando formulario de transferencia a terceros");
@@ -728,6 +759,16 @@ if (btnVerHistorial) {
 const btnCerrarSesion = document.getElementById("btnCerrarSesion");
 if (btnCerrarSesion) {
     btnCerrarSesion.addEventListener("click", cerrarSesion);
+}
+
+const btnCambiarContrasenia = document.getElementById("cambiarContrasenia");
+if (btnCambiarContrasenia) {
+    btnCambiarContrasenia.addEventListener("click", mostrarFormularioCambiarContrasenia);
+}
+
+const formCambiarContrasenia = document.getElementById("formularioCambiarContrasenia");
+if (formCambiarContrasenia) {
+    formCambiarContrasenia.addEventListener("submit", cambiarContrasenia);
 }
 
 // Cerrar sesión al recargar o salir de la página
