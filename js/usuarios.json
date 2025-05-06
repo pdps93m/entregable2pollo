@@ -1,0 +1,28 @@
+[
+    {
+        "id": 1,
+        "nombre": "Juan",
+        "apellido": "Pérez",
+        "usuario": "juanp",
+        "contrasenia": "1234",
+        "saldoActual": 10000,
+        "saldoDolares": 500,
+        "historialTransferenciasPropias": [],
+        "historialTransferenciasTerceros": [],
+        "historialComprasDolares": [],
+        "historialPrestamos": []
+    },
+    {
+        "id": 2,
+        "nombre": "Ana",
+        "apellido": "Gómez",
+        "usuario": "anag",
+        "contrasenia": "5678",
+        "saldoActual": 20000,
+        "saldoDolares": 1000,
+        "historialTransferenciasPropias": [],
+        "historialTransferenciasTerceros": [],
+        "historialComprasDolares": [],
+        "historialPrestamos": []
+    }
+]

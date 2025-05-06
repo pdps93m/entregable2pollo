@@ -1,10 +1,8 @@
-// Variables globales
 let usuarios = []; // Lista de usuarios registrados
 let usuarioLogueado = null; // Usuario actualmente logueado
 
-// Función para manejar la visibilidad de las secciones
+
 function actualizarVisibilidad(seccionesVisibles) {
-    console.log("Secciones visibles:", seccionesVisibles);
 
     const todasLasSecciones = [
         "login",
@@ -14,7 +12,6 @@ function actualizarVisibilidad(seccionesVisibles) {
         "formCambiarContrasenia",
         "formTransferirPropias",
         "formTransferirTerceros",
-        "resultadoOperaciones",
         "formSolicitarPrestamo",
         "formComprarDolares",
         "tablaTransferencias",
@@ -38,15 +35,22 @@ function actualizarVisibilidad(seccionesVisibles) {
                 elemento.classList.add("d-none");
             }
         } else {
-            console.error(`El elemento con id '${id}' no existe en el DOM.`);
+            Swal.fire({
+                title: 'Error',
+                text: `El elemento con id '${id}' no existe en el DOM.`,
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
         }
     });
 }
 
+
+
 function actualizarMensajeBienvenida() {
-    const nombreUsuario = usuarioLogueado.nombre; // Obtener el nombre del usuario logueado
-    const saldoPesos = usuarioLogueado.saldoActual.toFixed(2); // Saldo en pesos
-    const saldoDolares = (usuarioLogueado.saldoDolares || 0).toFixed(2); // Saldo en dólares (inicializar en 0 si no existe)
+    const nombreUsuario = usuarioLogueado.nombre; 
+    const saldoPesos = usuarioLogueado.saldoActual.toFixed(2); 
+    const saldoDolares = (usuarioLogueado.saldoDolares || 0).toFixed(2); 
 
     // Actualizar el contenido del mensaje de bienvenida
     document.getElementById("bienvenidaUsuario").textContent = `Bienvenido, ${nombreUsuario}`;
@@ -54,29 +58,27 @@ function actualizarMensajeBienvenida() {
     document.getElementById("saldoDolares").textContent = `Saldo actual en dólares: $${saldoDolares}`;
 }
 
-// Función para mostrar la pantalla de inicio personalizada
-function mostrarPantallaInicio() {
-    console.log("Mostrando pantalla de inicio personalizada");
 
-    // Actualizar el mensaje de bienvenida y los saldos
+function mostrarPantallaInicio() {
+
+  
     actualizarMensajeBienvenida();
 
-    // Mostrar la barra de acciones y la pantalla de inicio
+    
     actualizarVisibilidad(["homeBanking", "acciones", "saldoPesos", "saldoDolares"]);
 }
 
 actualizarVisibilidad(["homeBanking", "acciones", "saldoPesos", "saldoDolares"]);
 
 
-// Función para mostrar el formulario de registro
+
 function mostrarFormularioRegistro() {
-    console.log("Mostrando formulario de registro");
     actualizarVisibilidad(["registro"]);
 }
 
-// Función para manejar el inicio de sesión
+
 function iniciarSesion(e) {
-    e.preventDefault(); // Evitar recargar la página
+    e.preventDefault(); 
 
     const usuarioIngresado = document.getElementById("usuarioLogin").value.trim();
     const contraseniaIngresada = document.getElementById("contraseniaLogin").value.trim();
@@ -87,16 +89,27 @@ function iniciarSesion(e) {
 
     if (usuarioEncontrado) {
         usuarioLogueado = usuarioEncontrado;
-        localStorage.setItem("usuarioLogueadoId", usuarioLogueado.id); // Guardar el estado del usuario logueado
+        localStorage.setItem("usuarioLogueadoId", usuarioLogueado.id); 
         mostrarPantallaInicio();
+        Swal.fire({
+            title: `¡Bienvenido, ${usuarioLogueado.nombre}!`,
+            text: 'Has iniciado sesión correctamente.',
+            icon: 'success',
+            confirmButtonText: 'Aceptar'
+        });
     } else {
-        document.getElementById("loginMensaje").textContent = "Usuario o contraseña incorrectos.";
+        Swal.fire({
+            title: 'Error',
+            text: 'Usuario o contraseña incorrectos.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
     }
 }
 
-// Función para manejar el registro de usuarios
+
 function registrarUsuario(e) {
-    e.preventDefault(); // Evitar recargar la página
+    e.preventDefault(); 
 
     const nombre = document.getElementById("nombreRegistro").value.trim();
     const apellido = document.getElementById("apellidoRegistro").value.trim();
@@ -124,7 +137,7 @@ function registrarUsuario(e) {
     };
 
     usuarios.push(nuevoUsuario);
-    localStorage.setItem("usuarios", JSON.stringify(usuarios)); // Guardar usuarios en localStorage
+    localStorage.setItem("usuarios", JSON.stringify(usuarios)); 
 
     document.getElementById("registroMensaje").textContent = "Usuario registrado con éxito.";
     setTimeout(() => {
@@ -134,39 +147,63 @@ function registrarUsuario(e) {
 
 
 
-// Función para mostrar el formulario de inicio de sesión
+
 function mostrarFormularioLogin() {
-    console.log("Mostrando formulario de inicio de sesión");
     actualizarVisibilidad(["login"]);
 }
 
-// Función para cerrar sesión
 function cerrarSesion() {
-    console.log("Cerrando sesión");
-    usuarioLogueado = null;
-    localStorage.removeItem("usuarioLogueadoId");
-    mostrarFormularioLogin();
+    Swal.fire({
+        title: '¿Estás seguro?',
+        text: 'Se cerrará tu sesión actual.',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, cerrar sesión',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            usuarioLogueado = null;
+            localStorage.removeItem("usuarioLogueadoId");
+            mostrarFormularioLogin();
+            Swal.fire({
+                title: 'Sesión cerrada',
+                text: 'Has cerrado sesión correctamente.',
+                icon: 'success',
+                confirmButtonText: 'Aceptar'
+            });
+        }
+    });
 }
 
-// Función para mostrar transferencia a cuentas propias
+
+
 function mostrarTransferenciaPropias() {
-    console.log("Mostrando transferencia a cuentas propias");
     actualizarVisibilidad(["homeBanking", "acciones", "formTransferirPropias", "historialTransferenciasPropias"]);
     actualizarHistorialTransferenciasPropias();
 }
 
 function confirmarTransferenciaPropias(e) {
-    e.preventDefault(); // Evitar recargar la página
+    e.preventDefault(); 
 
     const monto = parseFloat(document.getElementById("montoTransferenciaPropias").value);
 
     if (isNaN(monto) || monto <= 0) {
-        alert("Por favor, ingrese un monto válido.");
+        Swal.fire({
+            title: 'Error',
+            text: 'Por favor, ingrese un monto válido.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
 
     if (usuarioLogueado.saldoActual < monto) {
-        alert("Saldo insuficiente para realizar la transferencia.");
+        Swal.fire({
+            title: 'Saldo insuficiente',
+            text: 'No tienes suficiente saldo para realizar esta transferencia.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
 
@@ -186,15 +223,21 @@ function confirmarTransferenciaPropias(e) {
     // Actualizar el array `usuarios` en el localStorage
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
 
-    // Actualizar el historial dinámicamente
+    
     actualizarHistorialTransferenciasPropias();
 
-    // Actualizar el mensaje de bienvenida para reflejar los nuevos saldos
+    
     actualizarMensajeBienvenida();
 
-    alert("Transferencia realizada con éxito.");
+    Swal.fire({
+        title: 'Transferencia realizada',
+        text: `Has transferido $${monto.toFixed(2)} a tu cuenta propia.`,
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+    });
 
-    // Mantener visible la sección de transferencias propias y su historial
+
+    
     actualizarVisibilidad([
         "homeBanking",
         "acciones",
@@ -207,14 +250,19 @@ function confirmarTransferenciaPropias(e) {
 function actualizarHistorialTransferenciasPropias() {
     const cuerpoHistorial = document.getElementById("cuerpoHistorialTransferenciasPropias");
     if (!cuerpoHistorial) {
-        console.error("El elemento con id 'cuerpoHistorialTransferenciasPropias' no existe en el DOM.");
+        Swal.fire({
+            title: 'Error',
+            text: "El elemento con id 'cuerpoHistorialTransferenciasPropias' no existe en el DOM.",
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
 
-    // Asegurarse de que el historial sea visible
+    
     cuerpoHistorial.classList.remove("d-none");
 
-    cuerpoHistorial.innerHTML = ""; // Limpiar el historial
+    cuerpoHistorial.innerHTML = ""; 
 
     if (usuarioLogueado.historialTransferenciasPropias && usuarioLogueado.historialTransferenciasPropias.length > 0) {
         usuarioLogueado.historialTransferenciasPropias.forEach((transferencia) => {
@@ -233,34 +281,48 @@ function actualizarHistorialTransferenciasPropias() {
     }
 }
 
-// Función para mostrar transferencia a terceros
+
 function mostrarTransferenciaTerceros() {
-    console.log("Mostrando transferencia a terceros");
     actualizarVisibilidad(["homeBanking", "acciones", "formTransferirTerceros", "historialTransferenciasTerceros"]);
     actualizarHistorialTransferenciasTerceros();
 }
 
 function confirmarTransferenciaTerceros(e) {
-    e.preventDefault(); // Evitar recargar la página
+    e.preventDefault(); 
 
     const usuarioDestino = document.getElementById("usuarioDestino").value.trim();
     const monto = parseFloat(document.getElementById("montoTransferencia").value);
-    const moneda = document.getElementById("monedaTransferencia").value; // Selector de moneda (pesos o dólares)
+    const moneda = document.getElementById("monedaTransferencia").value; 
 
     if (!usuarioDestino || isNaN(monto) || monto <= 0) {
-        alert("Por favor, ingrese un usuario destino y un monto válido.");
+        Swal.fire({
+            title: 'Error',
+            text: 'Por favor, ingrese un usuario destino y un monto válido.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
 
     if (moneda === "pesos") {
         if (usuarioLogueado.saldoActual < monto) {
-            alert("Saldo insuficiente en pesos para realizar la transferencia.");
+            Swal.fire({
+                title: 'Saldo insuficiente',
+                text: 'No tienes suficiente saldo en pesos para realizar esta transferencia.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
             return;
         }
         usuarioLogueado.saldoActual -= monto;
     } else if (moneda === "dolares") {
         if (usuarioLogueado.saldoDolares < monto) {
-            alert("Saldo insuficiente en dólares para realizar la transferencia.");
+            Swal.fire({
+                title: 'Saldo insuficiente',
+                text: 'No tienes suficiente saldo en dólares para realizar esta transferencia.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
             return;
         }
         usuarioLogueado.saldoDolares -= monto;
@@ -281,15 +343,20 @@ function confirmarTransferenciaTerceros(e) {
     // Actualizar el array `usuarios` en el localStorage
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
 
-    // Actualizar el historial dinámicamente
+    
     actualizarHistorialTransferenciasTerceros();
 
-    // Actualizar el mensaje de bienvenida para reflejar los nuevos saldos
+    
     actualizarMensajeBienvenida();
 
-    alert("Transferencia realizada con éxito.");
+    Swal.fire({
+        title: 'Transferencia realizada',
+        text: `Has transferido ${monto.toFixed(2)} ${moneda} a ${usuarioDestino}.`,
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+    });
 
-    // Mantener visible la sección de transferencias a terceros y su historial
+    
     actualizarVisibilidad([
         "homeBanking",
         "acciones",
@@ -302,14 +369,19 @@ function confirmarTransferenciaTerceros(e) {
 function actualizarHistorialTransferenciasTerceros() {
     const cuerpoHistorial = document.getElementById("cuerpoHistorialTransferenciasTerceros");
     if (!cuerpoHistorial) {
-        console.error("El elemento con id 'cuerpoHistorialTransferenciasTerceros' no existe en el DOM.");
+        Swal.fire({
+            title: 'Error',
+            text: "El elemento con id 'cuerpoHistorialTransferenciasTerceros' no existe en el DOM.",
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
 
-    // Asegurarse de que el historial sea visible
+    
     cuerpoHistorial.classList.remove("d-none");
 
-    cuerpoHistorial.innerHTML = ""; // Limpiar el historial
+    cuerpoHistorial.innerHTML = ""; 
 
     if (usuarioLogueado.historialTransferenciasTerceros && usuarioLogueado.historialTransferenciasTerceros.length > 0) {
         usuarioLogueado.historialTransferenciasTerceros.forEach((transferencia) => {
@@ -330,11 +402,10 @@ function actualizarHistorialTransferenciasTerceros() {
     }
 }
 
-// Función para mostrar historial de operaciones
-function mostrarTodosLosHistoriales() {
-    console.log("Mostrando todos los historiales");
 
-    // Actualizar visibilidad para mostrar todos los historiales
+function mostrarTodosLosHistoriales() {
+
+    
     actualizarVisibilidad([
         "homeBanking",
         "acciones",
@@ -344,53 +415,77 @@ function mostrarTodosLosHistoriales() {
         "tablaPrestamos"
     ]);
 
-    // Actualizar dinámicamente cada historial
+    
     actualizarHistorialTransferenciasPropias();
     actualizarHistorialTransferenciasTerceros();
     actualizarHistorialComprasDolares();
     actualizarHistorialPrestamos();
 }
 
-// Función para mostrar el formulario de cambio de contraseña
+
 function mostrarFormularioCambiarContrasenia() {
-    console.log("Mostrando formulario de cambio de contraseña");
     actualizarVisibilidad(["homeBanking", "acciones", "formCambiarContrasenia"]);
+
+    const campoContraseniaActual = document.getElementById("contraseniaActual");
+    const campoNuevaContrasenia = document.getElementById("nuevaContrasenia");
+    if (campoContraseniaActual) campoContraseniaActual.value = "";
+    if (campoNuevaContrasenia) campoNuevaContrasenia.value = "";
 }
 
 function cambiarContrasenia(e) {
-    e.preventDefault(); // Evitar recargar la página
+    e.preventDefault(); 
 
     const contraseniaActual = document.getElementById("contraseniaActual").value.trim();
     const nuevaContrasenia = document.getElementById("nuevaContrasenia").value.trim();
 
     if (!contraseniaActual || !nuevaContrasenia) {
-        alert("Por favor, complete todos los campos.");
+        Swal.fire({
+            title: 'Error',
+            text: 'Por favor, complete todos los campos.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
 
     if (contraseniaActual !== usuarioLogueado.contrasenia) {
-        alert("La contraseña actual ingresada es incorrecta.");
+        Swal.fire({
+            title: 'Error',
+            text: 'La contraseña actual ingresada es incorrecta.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
 
     if (contraseniaActual === nuevaContrasenia) {
-        alert("La nueva contraseña no puede ser igual a la actual.");
+        Swal.fire({
+            title: 'Error',
+            text: 'La nueva contraseña no puede ser igual a la actual.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
 
-    // Actualizar la contraseña del usuario
+    
     usuarioLogueado.contrasenia = nuevaContrasenia;
 
-    // Actualizar el array `usuarios` en el localStorage
+   
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
 
-    alert("Contraseña cambiada con éxito.");
-    mostrarPantallaInicio(); // Volver a la pantalla de inicio
+    Swal.fire({
+        title: 'Éxito',
+        text: 'Contraseña cambiada con éxito.',
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+    });
+
+    mostrarPantallaInicio(); 
 }
 
-// Función para mostrar el formulario y el historial de transferencias a terceros
+
 function mostrarFormularioTransferenciaTerceros() {
-    console.log("Mostrando formulario de transferencia a terceros");
     actualizarVisibilidad([
         "homeBanking",
         "acciones",
@@ -398,38 +493,62 @@ function mostrarFormularioTransferenciaTerceros() {
         "historialTransferenciasTerceros",
         "cuerpoHistorialTransferenciasTerceros"
     ]);
+
+    const campoUsuarioDestino = document.getElementById("usuarioDestino");
+
+    if (campoUsuarioDestino) {
+        // Verificar si hay un historial de transferencias a terceros
+        if (
+            usuarioLogueado.historialTransferenciasTerceros &&
+            usuarioLogueado.historialTransferenciasTerceros.length > 0
+        ) {
+            // Obtener el último destinatario del historial
+            const ultimaTransferencia =
+                usuarioLogueado.historialTransferenciasTerceros[
+                usuarioLogueado.historialTransferenciasTerceros.length - 1
+                ];
+            campoUsuarioDestino.value = ultimaTransferencia.usuarioDestino; 
+        } else {
+            campoUsuarioDestino.value = ""; 
+        }
+    }
+
+
     actualizarHistorialTransferenciasTerceros();
 }
 
-// Función para mostrar el formulario de solicitar préstamo
+
 function mostrarFormularioPrestamo() {
-    console.log("Mostrando formulario de solicitar préstamo");
     actualizarVisibilidad(["homeBanking", "acciones", "formSolicitarPrestamo"]);
 
     // Forzar la eliminación de la clase d-none
     const formSolicitarPrestamo = document.getElementById("formSolicitarPrestamo");
     if (formSolicitarPrestamo) {
         formSolicitarPrestamo.classList.remove("d-none");
-        console.log("Clase d-none eliminada manualmente del formulario de préstamo");
     }
 }
 
 function confirmarSolicitudPrestamo(e) {
-    e.preventDefault(); // Evitar recargar la página
+    e.preventDefault(); 
 
     const monto = parseFloat(document.getElementById("montoPrestamo").value);
     const plazo = parseInt(document.getElementById("plazoPrestamo").value);
 
     if (isNaN(monto) || monto <= 0 || isNaN(plazo) || plazo <= 0) {
-        alert("Por favor, ingrese un monto y un plazo válidos.");
+        Swal.fire({
+            title: 'Error',
+            text: 'Por favor, ingrese un monto y un plazo válidos.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
 
-    // Calcular la cuota mensual (interés fijo del 5% mensual como ejemplo)
+    
     const tasaInteres = 0.05;
     const cuota = (monto * (1 + tasaInteres * plazo)) / plazo;
 
-    // Registrar el préstamo en el historial
+    
     if (!usuarioLogueado.historialPrestamos) {
         usuarioLogueado.historialPrestamos = [];
     }
@@ -441,15 +560,20 @@ function confirmarSolicitudPrestamo(e) {
         hora: new Date().toLocaleTimeString()
     });
 
-    // Actualizar el array `usuarios` en el localStorage
+    
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
 
-    // Actualizar el historial dinámicamente
+    
     actualizarHistorialPrestamos();
 
-    alert("Préstamo solicitado con éxito.");
+    Swal.fire({
+        title: 'Préstamo solicitado',
+        text: `Has solicitado un préstamo de $${monto.toFixed(2)} a ${plazo} meses.`,
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+    });
 
-    // Mantener visible la sección de préstamos y su historial
+    
     actualizarVisibilidad([
         "homeBanking",
         "acciones",
@@ -461,14 +585,19 @@ function confirmarSolicitudPrestamo(e) {
 function actualizarHistorialPrestamos() {
     const cuerpoHistorial = document.getElementById("cuerpoTablaPrestamos");
     if (!cuerpoHistorial) {
-        console.error("El elemento con id 'cuerpoTablaPrestamos' no existe en el DOM.");
+        Swal.fire({
+            title: 'Error',
+            text: "El elemento con id 'cuerpoTablaPrestamos' no existe en el DOM.",
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
 
     // Asegurarse de que el historial sea visible
     cuerpoHistorial.classList.remove("d-none");
 
-    cuerpoHistorial.innerHTML = ""; // Limpiar el historial
+    cuerpoHistorial.innerHTML = ""; 
 
     if (usuarioLogueado.historialPrestamos && usuarioLogueado.historialPrestamos.length > 0) {
         usuarioLogueado.historialPrestamos.forEach((prestamo) => {
@@ -490,7 +619,6 @@ function actualizarHistorialPrestamos() {
 }
 
 function mostrarFormularioTransferenciaPropias() {
-    console.log("Mostrando formulario de transferencia a cuentas propias");
     actualizarVisibilidad([
         "homeBanking",
         "acciones",
@@ -502,7 +630,6 @@ function mostrarFormularioTransferenciaPropias() {
 }
 
 function mostrarFormularioSolicitarPrestamo() {
-    console.log("Mostrando formulario de solicitud de préstamo");
     actualizarVisibilidad([
         "homeBanking",
         "acciones",
@@ -510,25 +637,48 @@ function mostrarFormularioSolicitarPrestamo() {
         "tablaPrestamos",
         "cuerpoTablaPrestamos"
     ]);
+
+    const campoMontoPrestamo = document.getElementById("montoPrestamo");
+    if (campoMontoPrestamo) {
+        if (
+            usuarioLogueado.historialPrestamos &&
+            usuarioLogueado.historialPrestamos.length > 0
+        ) {
+            // Obtener el último préstamo del historial
+            const ultimoPrestamo =
+                usuarioLogueado.historialPrestamos[
+                usuarioLogueado.historialPrestamos.length - 1
+                ];
+            campoMontoPrestamo.value = ultimoPrestamo.monto; 
+        } else {
+            campoMontoPrestamo.value = ""; 
+        }
+    }
+
     actualizarHistorialPrestamos();
 }
 
 function solicitarPrestamo(e) {
-    e.preventDefault(); // Evitar recargar la página
+    e.preventDefault(); 
 
     const monto = parseFloat(document.getElementById("montoPrestamo").value);
     const plazo = parseInt(document.getElementById("plazoPrestamo").value);
 
     if (isNaN(monto) || monto <= 0 || isNaN(plazo) || plazo <= 0) {
-        alert("Por favor, ingrese valores válidos para el monto y el plazo.");
+        Swal.fire({
+            title: 'Error',
+            text: 'Por favor, ingrese valores válidos para el monto y el plazo.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
 
-    // Calcular la cuota mensual (ejemplo: interés fijo del 5%)
+    
     const tasaInteres = 0.05;
     const cuota = (monto * (1 + tasaInteres)) / plazo;
 
-    // Crear el objeto del préstamo
+    
     const nuevoPrestamo = {
         monto,
         plazo,
@@ -543,19 +693,26 @@ function solicitarPrestamo(e) {
     }
     usuarioLogueado.historialPrestamos.push(nuevoPrestamo);
 
-    // Actualizar el array `usuarios` en el localStorage
+   
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
 
-    // Actualizar la tabla de préstamos
+    
     actualizarTablaPrestamos();
 
-    // Volver a la pantalla de inicio
+    Swal.fire({
+        title: 'Préstamo solicitado',
+        text: `Has solicitado un préstamo de $${monto.toFixed(2)} a ${plazo} meses.`,
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+    });
+
+    
     mostrarPantallaInicio();
 }
 
 function actualizarTablaPrestamos() {
     const cuerpoTabla = document.getElementById("cuerpoTablaPrestamos");
-    cuerpoTabla.innerHTML = ""; // Limpiar la tabla
+    cuerpoTabla.innerHTML = ""; 
 
     if (usuarioLogueado.historialPrestamos && usuarioLogueado.historialPrestamos.length > 0) {
         usuarioLogueado.historialPrestamos.forEach((prestamo) => {
@@ -576,32 +733,45 @@ function actualizarTablaPrestamos() {
     }
 }
 
-// Función para mostrar el formulario de compra de dólares
+
 function mostrarFormularioCompraDolares() {
-    console.log("Ejecutando mostrarFormularioCompraDolares");
-    console.log("Secciones visibles esperadas: ['acciones', 'formComprarDolares', 'historialComprasDolares']");
-    // Mostrar la barra de acciones, el formulario y el historial de compras
+    
     actualizarVisibilidad(["homeBanking", "acciones", "formComprarDolares", "historialComprasDolares"]);
 
-    // Actualizar el historial de compras de dólares
+    const campoTasaCambio = document.getElementById("tasaCambio");
+    if (campoTasaCambio) {
+        campoTasaCambio.value = 200; 
+    }
+
+    
     actualizarHistorialComprasDolares();
 }
 
 function comprarDolares(e) {
-    e.preventDefault(); // Evitar recargar la página
+    e.preventDefault(); 
 
     const montoPesos = parseFloat(document.getElementById("montoCompraDolares").value);
     const tasaCambio = parseFloat(document.getElementById("tasaCambio").value);
 
     if (isNaN(montoPesos) || montoPesos <= 0 || isNaN(tasaCambio) || tasaCambio <= 0) {
-        alert("Por favor, ingrese valores válidos para el monto y la tasa de cambio.");
+        Swal.fire({
+            title: 'Error',
+            text: 'Por favor, ingrese valores válidos para el monto y la tasa de cambio.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
 
     const montoDolares = (montoPesos / tasaCambio).toFixed(2);
 
     if (usuarioLogueado.saldoActual < montoPesos) {
-        alert("Saldo insuficiente para realizar la compra.");
+        Swal.fire({
+            title: 'Saldo insuficiente',
+            text: 'No tienes suficiente saldo en pesos para realizar esta compra.',
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
 
@@ -621,30 +791,40 @@ function comprarDolares(e) {
         hora: new Date().toLocaleTimeString()
     });
 
-    // Actualizar el array `usuarios` en el localStorage
+    
     localStorage.setItem("usuarios", JSON.stringify(usuarios));
 
-    // Actualizar el historial dinámicamente
+   
     actualizarHistorialComprasDolares();
 
-    // Actualizar el mensaje de bienvenida para reflejar los nuevos saldos
+    
     actualizarMensajeBienvenida();
 
-    alert(`Compra realizada con éxito. Has adquirido ${montoDolares} dólares.`);
+    Swal.fire({
+        title: 'Compra realizada',
+        text: `Has adquirido ${montoDolares} dólares con éxito.`,
+        icon: 'success',
+        confirmButtonText: 'Aceptar'
+    });
 
-    // Mantener visible la sección de compra de dólares
+
+    
     actualizarVisibilidad(["homeBanking", "acciones", "formComprarDolares", "historialComprasDolares"]);
 }
 
 function actualizarHistorialComprasDolares() {
     const cuerpoHistorial = document.getElementById("cuerpoHistorialComprasDolares");
     if (!cuerpoHistorial) {
-        console.error("El elemento con id 'cuerpoHistorialComprasDolares' no existe en el DOM.");
+        Swal.fire({
+            title: 'Error',
+            text: "El elemento con id 'cuerpoHistorialComprasDolares' no existe en el DOM.",
+            icon: 'error',
+            confirmButtonText: 'Aceptar'
+        });
         return;
     }
 
-    cuerpoHistorial.innerHTML = ""; // Limpiar el historial
-
+    cuerpoHistorial.innerHTML = ""; 
     if (usuarioLogueado.historialComprasDolares && usuarioLogueado.historialComprasDolares.length > 0) {
         usuarioLogueado.historialComprasDolares.forEach((compra) => {
             const fila = document.createElement("tr");
@@ -664,26 +844,46 @@ function actualizarHistorialComprasDolares() {
     }
 }
 
-// Función para mostrar el formulario de prestamo
-function mostrarFormularioPrestamo() {
-    console.log("Mostrando formulario de préstamo");
 
-    // Mostrar la barra de acciones y el formulario de préstamo
+function mostrarFormularioPrestamo() {
+
+    
     actualizarVisibilidad(["homeBanking", "acciones", "formSolicitarPrestamo", "tablaPrestamos", "cuerpoTablaPrestamos"]);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    console.log("Inicializando aplicación...");
-
-    // Recuperar usuarios del localStorage
+    
     const usuariosGuardados = localStorage.getItem("usuarios");
-    if (usuariosGuardados) {
-        usuarios = JSON.parse(usuariosGuardados);
-        console.log("Usuarios cargados desde localStorage:", usuarios);
+    if (!usuariosGuardados) {
+        
+        fetch('./js/usuarios.json')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("No se pudo cargar el archivo JSON.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                usuarios = data; // Asignar los datos cargados a la variable global
+                localStorage.setItem("usuarios", JSON.stringify(usuarios)); 
+                Swal.fire({
+                    title: 'Datos cargados',
+                    text: 'Los usuarios iniciales se cargaron correctamente desde el archivo JSON.',
+                    icon: 'info',
+                    confirmButtonText: 'Aceptar'
+                });
+            })
+            .catch(error => {
+                Swal.fire({
+                    title: 'Error',
+                    text: 'No se pudieron cargar los datos iniciales.',
+                    icon: 'error',
+                    confirmButtonText: 'Aceptar'
+                });
+            });
     } else {
-        usuarios = [];
-        localStorage.setItem("usuarios", JSON.stringify(usuarios));
-        console.log("No se encontraron usuarios en localStorage. Inicializando array vacío.");
+        // Si hay datos en localStorage, usarlos
+        usuarios = JSON.parse(usuariosGuardados);
     }
 
     // Recuperar el estado del usuario logueado
@@ -702,7 +902,12 @@ document.addEventListener("DOMContentLoaded", () => {
                 mostrarPantallaInicio();
             }
         } else {
-            console.error("No se encontró el usuario logueado en la lista de usuarios.");
+            Swal.fire({
+                title: 'Error',
+                text: 'No se encontró el usuario logueado en la lista de usuarios.',
+                icon: 'error',
+                confirmButtonText: 'Aceptar'
+            });
             mostrarFormularioLogin();
         }
     } else {
@@ -771,7 +976,6 @@ if (formCambiarContrasenia) {
     formCambiarContrasenia.addEventListener("submit", cambiarContrasenia);
 }
 
-// Cerrar sesión al recargar o salir de la página
 
 // Vincular eventos a los botones
 document.getElementById("formLogin").addEventListener("submit", iniciarSesion);
@@ -780,7 +984,7 @@ document.getElementById("formRegistro").addEventListener("submit", registrarUsua
 document.getElementById("btnCerrarSesion").addEventListener("click", cerrarSesion);
 document.getElementById("transferirPropias").addEventListener("click", mostrarTransferenciaPropias);
 document.getElementById("transferirTerceros").addEventListener("click", mostrarTransferenciaTerceros);
-document.getElementById("verHistorial").addEventListener("click", mostrarHistorial);
+document.getElementById("verHistorial").addEventListener("click", mostrarTodosLosHistoriales);
 document.getElementById("cambiarContrasenia").addEventListener("click", mostrarFormularioCambiarContrasenia);
 document.getElementById("solicitarPrestamo").addEventListener("click", mostrarFormularioPrestamo);
 document.getElementById("formSolicitarPrestamo").addEventListener("submit", solicitarPrestamo);
